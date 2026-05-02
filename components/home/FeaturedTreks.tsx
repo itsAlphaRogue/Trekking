@@ -100,9 +100,13 @@ export default function FeaturedTreks() {
             </h3>
             <button className="text-white text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:translate-x-2 transition-transform font-sans">
               View Trip{" "}
-              <span className="material-symbols-outlined text-sm">
-                arrow_forward
-              </span>
+              <svg
+                className="h-3 fill-white/80"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+              >
+                <path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z" />
+              </svg>
             </button>
           </div>
         </div>
@@ -123,7 +127,7 @@ export default function FeaturedTreks() {
               Venture beyond the main trail to the shimmering turquoise waters
               of Gokyo.
             </p>
-            <button className="bg-white text-primary px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-stone-100 transition-all font-sans">
+            <button className="bg-white text-primary px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-primary hover:text-white transition-all font-sans">
               Plan Journey
             </button>
           </div>
