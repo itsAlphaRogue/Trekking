@@ -16,7 +16,7 @@ const noto = Noto_Serif({
 const vietnam = Be_Vietnam_Pro({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: "100",
+  weight: "400",
 });
 
 export default function RootLayout({
