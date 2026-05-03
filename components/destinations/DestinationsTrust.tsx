@@ -12,34 +12,6 @@ export default function DestinationsTrust() {
             your comfort as you push your limits across the highest peaks on
             Earth.
           </p>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="flex gap-4">
-              <span className="material-symbols-outlined text-secondary">
-                verified_user
-              </span>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary font-sans">
-                  Safety First
-                </p>
-                <p className="text-sm text-on-surface-variant font-sans">
-                  Oximeters &amp; satellite phones on all treks.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <span className="material-symbols-outlined text-secondary">
-                eco
-              </span>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary font-sans">
-                  Eco-Certified
-                </p>
-                <p className="text-sm text-on-surface-variant font-sans">
-                  Zero-waste trekking protocols.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right: email capture */}
