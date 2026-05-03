@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import ContactHero from "@/components/contact/ContactHero";
 import ContactForm from "@/components/contact/ContactForm";
 import ContactSidebar from "@/components/contact/ContactSidebar";
-import ContactPartners from "@/components/contact/ContactPartners";
 
 export const metadata = {
   title: "Contact | Himalayan Vistas",
@@ -37,8 +36,6 @@ export default function ContactPage() {
             <ContactSidebar />
           </div>
         </section>
-
-        <ContactPartners />
       </main>
       <Footer />
     </>

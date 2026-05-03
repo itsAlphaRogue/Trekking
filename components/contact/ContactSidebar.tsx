@@ -1,6 +1,6 @@
 export default function ContactSidebar() {
   const whatsappMsg = encodeURIComponent(
-    "Hi, I'd like to inquire about trekking packages with Himalayan Vistas."
+    "Hi, I'd like to inquire about trekking packages with Himalayan Vistas.",
   );
   const whatsappUrl = `https://wa.me/9779800000000?text=${whatsappMsg}`;
 
@@ -15,8 +15,14 @@ export default function ContactSidebar() {
           className="group flex items-center p-6 bg-surface-container border border-outline-variant hover:border-secondary transition-all"
         >
           <div className="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mr-6 group-hover:scale-110 transition-transform shrink-0">
-            <span className="material-symbols-outlined text-on-secondary-container text-3xl">
-              chat
+            <span className=" text-on-secondary-container text-3xl">
+              <svg
+                className="h-9 fill-on-secondary-container"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+              >
+                <path d="M476.9 161.1C435 119.1 379.2 96 319.9 96C197.5 96 97.9 195.6 97.9 318C97.9 357.1 108.1 395.3 127.5 429L96 544L213.7 513.1C246.1 530.8 282.6 540.1 319.8 540.1L319.9 540.1C442.2 540.1 544 440.5 544 318.1C544 258.8 518.8 203.1 476.9 161.1zM319.9 502.7C286.7 502.7 254.2 493.8 225.9 477L219.2 473L149.4 491.3L168 423.2L163.6 416.2C145.1 386.8 135.4 352.9 135.4 318C135.4 216.3 218.2 133.5 320 133.5C369.3 133.5 415.6 152.7 450.4 187.6C485.2 222.5 506.6 268.8 506.5 318.1C506.5 419.9 421.6 502.7 319.9 502.7zM421.1 364.5C415.6 361.7 388.3 348.3 383.2 346.5C378.1 344.6 374.4 343.7 370.7 349.3C367 354.9 356.4 367.3 353.1 371.1C349.9 374.8 346.6 375.3 341.1 372.5C308.5 356.2 287.1 343.4 265.6 306.5C259.9 296.7 271.3 297.4 281.9 276.2C283.7 272.5 282.8 269.3 281.4 266.5C280 263.7 268.9 236.4 264.3 225.3C259.8 214.5 255.2 216 251.8 215.8C248.6 215.6 244.9 215.6 241.2 215.6C237.5 215.6 231.5 217 226.4 222.5C221.3 228.1 207 241.5 207 268.8C207 296.1 226.9 322.5 229.6 326.2C232.4 329.9 268.7 385.9 324.4 410C359.6 425.2 373.4 426.5 391 423.9C401.7 422.3 423.8 410.5 428.4 397.5C433 384.5 433 373.4 431.6 371.1C430.3 368.6 426.6 367.2 421.1 364.5z" />
+              </svg>
             </span>
           </div>
           <div>
@@ -34,8 +40,14 @@ export default function ContactSidebar() {
           className="group flex items-center p-6 bg-surface-container border border-outline-variant hover:border-secondary transition-all"
         >
           <div className="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mr-6 group-hover:scale-110 transition-transform shrink-0">
-            <span className="material-symbols-outlined text-on-secondary-container text-3xl">
-              mail
+            <span className="text-on-secondary-container text-3xl">
+              <svg
+                className="h-8 fill-on-secondary-container"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+              >
+                <path d="M112 128C85.5 128 64 149.5 64 176C64 191.1 71.1 205.3 83.2 214.4L291.2 370.4C308.3 383.2 331.7 383.2 348.8 370.4L556.8 214.4C568.9 205.3 576 191.1 576 176C576 149.5 554.5 128 528 128L112 128zM64 260L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 260L377.6 408.8C343.5 434.4 296.5 434.4 262.4 408.8L64 260z" />
+              </svg>
             </span>
           </div>
           <div>
@@ -47,58 +59,6 @@ export default function ContactSidebar() {
             </p>
           </div>
         </a>
-      </div>
-
-      {/* Office info card */}
-      <div className="p-10 bg-primary text-on-primary shadow-2xl relative overflow-hidden">
-        {/* decorative icon */}
-        <div className="absolute -right-12 -top-12 opacity-10 pointer-events-none">
-          <span
-            className="material-symbols-outlined text-[160px]"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            location_on
-          </span>
-        </div>
-
-        <h3 className="font-serif text-2xl font-semibold mb-6">
-          Kathmandu Headquarters
-        </h3>
-
-        <div className="space-y-4 text-base font-sans">
-          <div className="flex items-start gap-4">
-            <span className="material-symbols-outlined mt-0.5 shrink-0">
-              pin_drop
-            </span>
-            <p>
-              Street 42, Thamel Ward 26,
-              <br />
-              Kathmandu 44600, Nepal
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="material-symbols-outlined shrink-0">call</span>
-            <p>+977 1 442 3890</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="material-symbols-outlined shrink-0">schedule</span>
-            <p>Mon – Fri: 9:00 AM – 6:00 PM (NPT)</p>
-          </div>
-        </div>
-
-        {/* Map thumbnail */}
-        <div className="mt-8 pt-8 border-t border-on-primary/20">
-          <p className="text-xs font-semibold uppercase tracking-widest text-on-primary/80 mb-4 font-sans">
-            Location Map
-          </p>
-          <div className="h-48 w-full bg-primary-container rounded-sm overflow-hidden border border-on-primary/10 group">
-            <img
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              alt="Kathmandu, Nepal"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXzZvXiFl4XHkbPu2ellDgm-MZqcs6cyxYKIVVx0A46_s09_cU2gIz-KgyUBGoby-rRdN3ceTgJAGxb2zrt_Zs_ZJYC82es-nww8ldwq_RcfFbNEJ90O6oajS9LvuzcVGrIJ9AQJD1AVhDHp6G0Ccjg9OLZbwWxIr0MHMGpHqOkda6wFkurOsVjC9AWyb9DZ555LtN-7A59L2Kh4DXVG8fAVMW2WfZn72nMoBFeMy0VUt7bk1vLXVTDRRmDN9EvGc7BClKQSK6-YzI"
-            />
-          </div>
-        </div>
       </div>
     </div>
   );
