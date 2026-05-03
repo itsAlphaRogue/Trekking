@@ -7,7 +7,7 @@ interface Props {
   total: number;
 }
 
-export default function TripsSortBar({ total }: Props) {
+export default function TreksSortBar({ total }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

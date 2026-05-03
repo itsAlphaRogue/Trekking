@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-type ActivePage = "home" | "destinations" | "trips" | "about" | "contact";
+type ActivePage = "home" | "destinations" | "treks" | "contact";
 
 interface TopNavBarProps {
   activePage?: ActivePage;
@@ -12,8 +12,7 @@ interface TopNavBarProps {
 const navLinks: { label: string; href: string; key: ActivePage }[] = [
   { label: "Home", href: "/", key: "home" },
   { label: "Destinations", href: "/destinations", key: "destinations" },
-  { label: "Trips", href: "/trips", key: "trips" },
-  { label: "About", href: "/about", key: "about" },
+  { label: "Treks", href: "/treks", key: "treks" },
   { label: "Contact", href: "/contact", key: "contact" },
 ];
 

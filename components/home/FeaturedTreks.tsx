@@ -99,7 +99,7 @@ export default function FeaturedTreks() {
               Upper Mustang
             </h3>
             <button className="text-white text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:translate-x-2 transition-transform font-sans">
-              View Trip{" "}
+              View Trek{" "}
               <svg
                 className="h-3 fill-white/80"
                 xmlns="http://www.w3.org/2000/svg"

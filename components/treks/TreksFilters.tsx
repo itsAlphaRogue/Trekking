@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
-import { Difficulty } from "@/lib/tripListings";
+import { Difficulty } from "@/lib/trekListings";
 
 const DIFFICULTIES: Difficulty[] = [
   "Easy",
@@ -17,7 +17,7 @@ const REGIONS = [
   { value: "langtang", label: "Langtang Valley" },
 ];
 
-export default function TripsFilters() {
+export default function TreksFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

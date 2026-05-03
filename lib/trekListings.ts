@@ -1,14 +1,14 @@
 /**
  * Trek listing types.
- * When Supabase is connected, replace the static `allTrips` array
- * with a query to the `treks` table. The TripListing interface maps
+ * When Supabase is connected, replace the static `allTreks` array
+ * with a query to the `treks` table. The TrekListing interface maps
  * 1:1 to the expected DB columns.
  */
 
 import { Difficulty } from "./regions";
 export type { Difficulty };
 
-export interface TripListing {
+export interface TrekListing {
   id: string;
   slug: string;
   title: string;
@@ -21,7 +21,7 @@ export interface TripListing {
   image: string;
 }
 
-export interface TripFilters {
+export interface TrekFilters {
   q?: string;
   difficulty?: Difficulty[];
   regions?: string[];
@@ -44,7 +44,7 @@ export const TRIPS_PER_PAGE = 8;
 //     .in("difficulty", filters.difficulty ?? [])
 //     ...
 // ---------------------------------------------------------------------------
-export const allTrips: TripListing[] = [
+export const allTreks: TrekListing[] = [
   {
     id: "1",
     slug: "everest-base-camp",
@@ -147,12 +147,12 @@ export const allTrips: TripListing[] = [
  * Filter + sort + paginate trips.
  * Replace the body of this function with a Supabase call to go live.
  */
-export function queryTrips(filters: TripFilters): {
-  trips: TripListing[];
+export function queryTreks(filters: TrekFilters): {
+  treks: TrekListing[];
   total: number;
   totalPages: number;
 } {
-  let results = [...allTrips];
+  let results = [...allTreks];
 
   // Keyword search
   if (filters.q) {
@@ -209,7 +209,7 @@ export function queryTrips(filters: TripFilters): {
   const page = filters.page ?? 1;
   const totalPages = Math.ceil(total / TRIPS_PER_PAGE);
   const start = (page - 1) * TRIPS_PER_PAGE;
-  const trips = results.slice(start, start + TRIPS_PER_PAGE);
+  const treks = results.slice(start, start + TRIPS_PER_PAGE);
 
-  return { trips, total, totalPages };
+  return { treks, total, totalPages };
 }

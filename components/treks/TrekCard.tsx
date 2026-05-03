@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TripListing, Difficulty } from "@/lib/tripListings";
+import { TrekListing, Difficulty } from "@/lib/trekListings";
 
 const difficultyConfig: Record<
   Difficulty,
@@ -32,7 +32,7 @@ const difficultyConfig: Record<
   },
 };
 
-export default function TripCard({ trip }: { trip: TripListing }) {
+export default function TrekCard({ trip }: { trip: TrekListing }) {
   const diff = difficultyConfig[trip.difficulty];
 
   return (

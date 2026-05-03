@@ -8,7 +8,7 @@ interface Props {
   totalPages: number;
 }
 
-export default function TripsPagination({ currentPage, totalPages }: Props) {
+export default function TreksPagination({ currentPage, totalPages }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -67,7 +67,7 @@ export default function TripsPagination({ currentPage, totalPages }: Props) {
           >
             {p}
           </button>
-        )
+        ),
       )}
 
       {/* Next */}

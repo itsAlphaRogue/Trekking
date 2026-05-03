@@ -7,12 +7,8 @@ const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
   { href: "/admin/treks", icon: "map", label: "Active Treks" },
   { href: "/admin/bookings", icon: "event_available", label: "Bookings" },
-  {
-    href: "/admin/inquiries",
-    icon: "chat_bubble",
-    label: "Inquiries",
-    badge: 12,
-  },
+  { href: "/admin/packages", icon: "hiking", label: "Packages" },
+  { href: "/admin/inquiries", icon: "chat_bubble", label: "Inquiries", badge: 12 },
   { href: "/admin/finance", icon: "payments", label: "Finance" },
   { href: "/admin/settings", icon: "settings", label: "Settings" },
 ];
@@ -25,17 +21,11 @@ export default function AdminSidebar() {
       {/* Brand */}
       <div className="p-8 flex items-center gap-4">
         <div className="w-10 h-10 bg-primary-container flex items-center justify-center rounded-lg">
-          <span className=" text-on-primary-container">
-            <svg
-              className="h-8 fill-white"
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="#e3e3e3"
-            >
-              <path d="m40-240 240-320 180 240h300L560-586 460-454l-50-66 150-200 360 480H40Zm521-80Zm-361 0h160l-80-107-80 107Zm0 0h160-160Z" />
-            </svg>
+          <span
+            className="material-symbols-outlined text-on-primary-container"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
+            landscape
           </span>
         </div>
         <div>
@@ -65,7 +55,9 @@ export default function AdminSidebar() {
               <span
                 className="material-symbols-outlined text-xl"
                 style={
-                  isActive ? { fontVariationSettings: "'FILL' 1" } : undefined
+                  isActive
+                    ? { fontVariationSettings: "'FILL' 1" }
+                    : undefined
                 }
               >
                 {item.icon}

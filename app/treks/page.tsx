@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
-import TripsFilters from "@/components/trips/TripsFilters";
-import TripsSortBar from "@/components/trips/TripsSortBar";
-import TripCard from "@/components/trips/TripCard";
-import TripsPagination from "@/components/trips/TripsPagination";
-import { queryTrips, Difficulty } from "@/lib/tripListings";
+import TreksFilters from "@/components/treks/TreksFilters";
+import TreksSortBar from "@/components/treks/TreksSortBar";
+import TrekCard from "@/components/treks/TrekCard";
+import TreksPagination from "@/components/treks/TreksPagination";
+import { queryTreks, Difficulty } from "@/lib/trekListings";
 
 export const metadata = {
   title: "All Treks | Himalayan Vistas",
@@ -43,7 +43,7 @@ export default async function TripsPage({ searchParams }: Props) {
   };
 
   // This function is the one you replace with a Supabase query
-  const { trips, total, totalPages } = queryTrips(filters);
+  const { treks, total, totalPages } = queryTreks(filters);
 
   return (
     <>
@@ -64,7 +64,7 @@ export default async function TripsPage({ searchParams }: Props) {
               </Suspense>
 
               {/* Grid */}
-              {trips.length === 0 ? (
+              {treks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 gap-4">
                   <span className="material-symbols-outlined text-6xl text-outline-variant">
                     search_off
@@ -78,8 +78,8 @@ export default async function TripsPage({ searchParams }: Props) {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {trips.map((trip) => (
-                    <TripCard key={trip.id} trip={trip} />
+                  {treks.map((trek) => (
+                    <TrekCard key={trek.id} trek={trek} />
                   ))}
                 </div>
               )}

@@ -60,7 +60,7 @@ export default function DestinationGrid() {
               </p>
             </div>
             <button className="bg-primary-container text-white font-serif px-8 py-4 whitespace-nowrap self-start md:self-end hover:bg-primary transition-colors active:scale-95 duration-200">
-              View Trips
+              View Treks
             </button>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function DestinationGrid() {
               to the arid high-altitude deserts of Mustang.
             </p>
             <button className="border border-primary text-primary font-serif px-6 py-3 hover:bg-primary hover:text-white transition-all active:scale-95 duration-200">
-              View Trips
+              View Treks
             </button>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function DestinationGrid() {
               mountain views and rich Tamang heritage.
             </p>
             <button className="border border-primary text-primary font-serif px-6 py-3 hover:bg-primary hover:text-white transition-all active:scale-95 duration-200">
-              View Trips
+              View Treks
             </button>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function DestinationGrid() {
                 Tibetan-style villages.
               </p>
               <button className="bg-primary-container text-white font-serif px-8 py-4 self-start hover:bg-primary transition-colors active:scale-95 duration-200">
-                View Trips
+                View Treks
               </button>
             </div>
           </div>

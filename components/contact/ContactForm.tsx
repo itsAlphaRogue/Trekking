@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const TRIP_OPTIONS = [
+const TREK_OPTIONS = [
   "Everest Base Camp Trek",
   "Annapurna Circuit",
   "Upper Mustang Expedition",
@@ -60,7 +60,7 @@ export default function ContactForm() {
   return (
     <div className="lg:col-span-7 bg-surface p-10 shadow-sm border border-surface-variant relative z-10">
       <h2 className="font-serif text-[40px] leading-12 font-semibold text-primary mb-8">
-        Trip Inquiry
+        Trek Inquiry
       </h2>
 
       <form className="space-y-8" onSubmit={handleSubmit}>
@@ -93,11 +93,11 @@ export default function ContactForm() {
         {/* Trip Interest */}
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
-            Primary Trip Interest
+            Primary Trek Interest
           </label>
           <div className="relative">
             <select className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans appearance-none cursor-pointer">
-              {TRIP_OPTIONS.map((opt) => (
+              {TREK_OPTIONS.map((opt) => (
                 <option key={opt}>{opt}</option>
               ))}
             </select>
