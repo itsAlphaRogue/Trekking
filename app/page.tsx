@@ -15,7 +15,7 @@ export default function Home() {
         <Statistics />
         <FeaturedTreks />
         <WhyTrekWithUs />
-        <WeatherAndSocialProof />
+        {/* <WeatherAndSocialProof /> */}
       </main>
       <Footer />
     </>

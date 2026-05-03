@@ -26,7 +26,7 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl md:text-2xl font-bold font-serif text-[#1B365D] tracking-tight"
+          className="text-xl md:text-2xl font-bold font-serif text-primary-container tracking-tight"
         >
           Himalayan Vistas
         </Link>
@@ -39,8 +39,8 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
               href={href}
               className={`font-serif tracking-tight transition-colors ${
                 activePage === key
-                  ? "text-[#1B365D] border-b-2 border-[#1B365D] pb-1"
-                  : "text-stone-600 hover:text-[#1B365D]"
+                  ? "text-primary-container border-b-2 border-primary-container pb-1"
+                  : "text-stone-600 hover:text-primary-container"
               }`}
             >
               {label}
@@ -62,14 +62,14 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
               </svg>
             </button>
           </div>
-          <button className="bg-[#1B365D] text-white px-6 py-3 font-serif hover:opacity-90 active:scale-95 transition-all">
+          <button className="bg-primary-container text-white px-6 py-3 font-serif hover:opacity-90 active:scale-95 transition-all">
             Enquire Now
           </button>
         </div>
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden text-[#1B365D] w-10 h-10 flex items-center justify-center"
+          className="md:hidden text-primary-container w-10 h-10 flex items-center justify-center"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -88,9 +88,7 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
       {/* Mobile Menu with Transition */}
       <div
         className={`md:hidden bg-stone-50 border-t border-stone-200 overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileOpen
-            ? "max-h-[500px] opacity-100"
-            : "max-h-0 opacity-0 invisible"
+          mobileOpen ? "max-h-125 opacity-100" : "max-h-0 opacity-0 invisible"
         }`}
       >
         <div className="px-6 py-6 flex flex-col gap-4">
@@ -100,15 +98,15 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
               href={href}
               className={`font-serif py-3 border-b border-stone-100 transition-colors ${
                 activePage === key
-                  ? "text-[#1B365D] font-semibold"
-                  : "text-stone-600 active:text-[#1B365D]"
+                  ? "text-primary-container font-semibold"
+                  : "text-stone-600 active:text-primary-container"
               }`}
               onClick={() => setMobileOpen(false)}
             >
               {label}
             </Link>
           ))}
-          <button className="bg-[#1B365D] text-white px-6 py-4 font-serif mt-2 shadow-sm active:scale-[0.98] transition-transform">
+          <button className="bg-primary-container text-white px-6 py-4 font-serif mt-2 shadow-sm active:scale-[0.98] transition-transform">
             Enquire Now
           </button>
         </div>

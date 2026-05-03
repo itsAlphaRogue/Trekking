@@ -30,7 +30,7 @@ export default function HeroSection() {
           className="w-full h-full object-cover"
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrgoSqs4cPQK1mamJWCRgY6Gm__s3TK3uTF2gVhwu6Qx6wXw8bzTW3lcHsvFbHGqFgWvoP28sX979m_SC-3eyPhYC93hmVE04hjgKQy-5CFWk-K6mss85ILUTusAB5WyvjqzvuPf31ESLf2Bv-w0QsLNc0rx5PbF4AkdhC00IqHoEJQlhNStnvXmTTTixSlkB-7Esb4tpSL_IRkJnRm-PR2iwId77btUUz7cIKo3AE2nr0rPc8iJSrmSJ-MhLdCKnbtTEsi4xc8vnz"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-[#1B365D]/50 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-primary-container/50 to-transparent" />
       </div>
 
       {/* Content */}
@@ -111,7 +111,7 @@ export default function HeroSection() {
                       className={`w-full text-left px-6 py-4 text-sm font-medium transition-all cursor-pointer
                         ${
                           selected === opt
-                            ? "bg-white text-[#1B365D]"
+                            ? "bg-white text-primary-container"
                             : "text-white/80 hover:bg-white/10 hover:text-white"
                         }`}
                     >
@@ -123,7 +123,7 @@ export default function HeroSection() {
             </div>
 
             {/* Button */}
-            <button className="w-full md:w-auto bg-white text-[#1B365D] px-8 py-4 text-xs font-semibold uppercase tracking-widest hover:bg-stone-100 transition-colors whitespace-nowrap">
+            <button className="w-full md:w-auto bg-white text-primary-container px-8 py-4 text-xs font-semibold uppercase tracking-widest hover:bg-stone-100 transition-colors whitespace-nowrap">
               Search Treks
             </button>
           </div>
