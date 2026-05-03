@@ -118,9 +118,6 @@ export default function TripsFilters() {
 
         {/* Search */}
         <div className="mb-8">
-          <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
-            Search
-          </label>
           <div className="relative">
             <input
               className="w-full bg-surface-container-lowest border-b-2 border-primary focus:border-outline px-4 py-3 text-base font-sans outline-none"
@@ -129,8 +126,17 @@ export default function TripsFilters() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
-            <span className="material-symbols-outlined absolute right-3 top-3 text-outline">
-              search
+            <span className=" absolute right-3 top-3 text-outline">
+              <svg
+                className="h-8 fill-primary"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#e3e3e3"
+              >
+                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+              </svg>
             </span>
           </div>
         </div>
