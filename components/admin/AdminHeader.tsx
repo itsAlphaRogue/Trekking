@@ -15,6 +15,10 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
     title: "Bookings",
     subtitle: "Manage all confirmed and pending bookings.",
   },
+  "/admin/regions": {
+    title: "Regions",
+    subtitle: "Manage trekking regions shown on the destinations page.",
+  },
   "/admin/packages": {
     title: "Packages",
     subtitle: "Add, edit and delete trek packages shown on the public site.",

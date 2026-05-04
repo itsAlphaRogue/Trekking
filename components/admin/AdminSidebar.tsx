@@ -5,10 +5,16 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
-  { href: "/admin/treks", icon: "map", label: "Active Treks" },
+  { href: "/admin/active-treks", icon: "map", label: "Active Treks" },
   { href: "/admin/bookings", icon: "event_available", label: "Bookings" },
-  { href: "/admin/packages", icon: "hiking", label: "Packages" },
-  { href: "/admin/inquiries", icon: "chat_bubble", label: "Inquiries", badge: 12 },
+  { href: "/admin/treks", icon: "hiking", label: "treks" },
+  { href: "/admin/regions", icon: "terrain", label: "Regions" },
+  {
+    href: "/admin/inquiries",
+    icon: "chat_bubble",
+    label: "Inquiries",
+    badge: 12,
+  },
   { href: "/admin/finance", icon: "payments", label: "Finance" },
   { href: "/admin/settings", icon: "settings", label: "Settings" },
 ];
@@ -55,9 +61,7 @@ export default function AdminSidebar() {
               <span
                 className="material-symbols-outlined text-xl"
                 style={
-                  isActive
-                    ? { fontVariationSettings: "'FILL' 1" }
-                    : undefined
+                  isActive ? { fontVariationSettings: "'FILL' 1" } : undefined
                 }
               >
                 {item.icon}
