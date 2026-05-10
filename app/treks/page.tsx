@@ -1,17 +1,20 @@
 import { Suspense } from "react";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
-import TreksFilters from "@/components/treks/TreksFilters";
-import TreksSortBar from "@/components/treks/TreksSortBar";
+import TripsFilters from "@/components/treks/TreksFilters";
+import TripsSortBar from "@/components/treks/TreksSortBar";
 import TrekCard from "@/components/treks/TrekCard";
-import TreksPagination from "@/components/treks/TreksPagination";
-import { queryTreks, Difficulty } from "@/lib/trekListings";
+import TripsPagination from "@/components/treks/TreksPagination";
+import { queryTreks, Difficulty } from "@/lib/supabase/queries/treks";
 
 export const metadata = {
   title: "All Treks | Himalayan Vistas",
   description:
     "Browse all Himalayan trekking packages — filter by difficulty, region, duration and price.",
 };
+
+// Opt out of static generation — this page reads URL search params
+export const dynamic = "force-dynamic";
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -20,7 +23,6 @@ interface Props {
 export default async function TripsPage({ searchParams }: Props) {
   const sp = await searchParams;
 
-  // Parse URL search params server-side
   const filters = {
     q: (sp.q as string) ?? undefined,
     difficulty: sp.difficulty
@@ -42,28 +44,23 @@ export default async function TripsPage({ searchParams }: Props) {
     page: sp.page ? Number(sp.page) : 1,
   };
 
-  // This function is the one you replace with a Supabase query
-  const { treks, total, totalPages } = queryTreks(filters);
+  const { treks, total, totalPages } = await queryTreks(filters);
 
   return (
     <>
-      <TopNavBar activePage="trips" />
+      <TopNavBar activePage="treks" />
       <main className="flex flex-col min-h-screen bg-surface">
-        <div className="max-w-7xl w-full mx-auto px-6 md:px-8 py-12 grow">
+        <div className="max-w-7xl w-full mx-auto px-6 md:px-8 py-12 flex-grow">
           <div className="flex flex-col md:flex-row gap-12">
-            {/* Sidebar filters — needs Suspense because it uses useSearchParams */}
             <Suspense fallback={<div className="w-80 shrink-0" />}>
               <TripsFilters />
             </Suspense>
 
-            {/* Results */}
-            <section className="grow min-w-0">
-              {/* Sort bar */}
+            <section className="flex-grow min-w-0">
               <Suspense fallback={null}>
                 <TripsSortBar total={total} />
               </Suspense>
 
-              {/* Grid */}
               {treks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 gap-4">
                   <span className="material-symbols-outlined text-6xl text-outline-variant">
@@ -84,7 +81,6 @@ export default async function TripsPage({ searchParams }: Props) {
                 </div>
               )}
 
-              {/* Pagination */}
               <Suspense fallback={null}>
                 <TripsPagination
                   currentPage={filters.page ?? 1}

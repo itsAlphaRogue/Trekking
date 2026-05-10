@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import DestinationsHero from "@/components/destinations/DestinationsHero";
 import DestinationGrid from "@/components/destinations/DestinationGrid";
 import DestinationsTrust from "@/components/destinations/DestinationsTrust";
+import { getRegions } from "@/lib/supabase/queries/regions";
 
 export const metadata = {
   title: "Destinations | Himalayan Vistas",
@@ -10,13 +11,15 @@ export const metadata = {
     "Explore Nepal's most iconic trekking regions — Everest, Annapurna, Langtang, and Manaslu.",
 };
 
-export default function DestinationsPage() {
+export default async function DestinationsPage() {
+  const regions = await getRegions();
+
   return (
     <>
       <TopNavBar activePage="destinations" />
       <main>
         <DestinationsHero />
-        <DestinationGrid />
+        <DestinationGrid regions={regions} />
         <DestinationsTrust />
       </main>
       <Footer />

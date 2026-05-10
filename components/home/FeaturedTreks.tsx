@@ -10,7 +10,7 @@ export default function FeaturedTreks() {
             Featured Expeditions
           </h2>
           <p className="text-base text-on-surface-variant max-w-md font-sans">
-            Our most sought-after journeys, curated for those who demand the
+            Our most sought after journeys, curated for those who demand the
             extraordinary.
           </p>
         </div>

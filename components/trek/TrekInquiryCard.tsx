@@ -1,8 +1,8 @@
-import { TrekDetail } from "@/lib/treks";
+import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
   const whatsappMsg = encodeURIComponent(
-    `Hi, I'm interested in the ${trek.title}. Can you provide more details?`
+    `Hi, I'm interested in the ${trek.title}. Can you provide more details?`,
   );
   const whatsappUrl = `https://wa.me/9779800000000?text=${whatsappMsg}`;
   const emailSubject = encodeURIComponent(`Inquiry: ${trek.title}`);
@@ -27,7 +27,9 @@ export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
             <p className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant font-sans">
               Next Departure
             </p>
-            <p className="text-base font-bold font-sans">{trek.nextDeparture}</p>
+            <p className="text-base font-bold font-sans">
+              {trek.nextDeparture ?? "On Request"}
+            </p>
           </div>
         </div>
 
@@ -40,7 +42,7 @@ export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
               Price From
             </p>
             <p className="text-base font-bold font-sans">
-              ${trek.priceFrom.toLocaleString()} USD
+              ${trek.priceFrom?.toLocaleString()} USD
             </p>
           </div>
         </div>
@@ -67,26 +69,30 @@ export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
       </div>
 
       {/* Guide section */}
-      <div className="mt-8 border-t border-outline-variant pt-6">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden shrink-0">
-            <img
-              alt={trek.guideName}
-              className="w-full h-full object-cover"
-              src={trek.guideImage}
-            />
+      {trek.guideName && (
+        <div className="mt-8 border-t border-outline-variant pt-6">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden shrink-0">
+              <img
+                alt={trek.guideName}
+                className="w-full h-full object-cover"
+                src={trek.guideImage ?? "/fallback.png"}
+              />
+            </div>
+            <div>
+              <p className="text-base font-bold font-sans">{trek.guideName}</p>
+              <p className="text-xs text-on-surface-variant font-sans">
+                {trek.guideTitle}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-base font-bold font-sans">{trek.guideName}</p>
-            <p className="text-xs text-on-surface-variant font-sans">
-              {trek.guideTitle}
+          {trek.guideQuote && (
+            <p className="text-sm italic text-on-surface-variant font-sans">
+              &ldquo;{trek.guideQuote}&rdquo;
             </p>
-          </div>
+          )}
         </div>
-        <p className="text-sm italic text-on-surface-variant font-sans">
-          &ldquo;{trek.guideQuote}&rdquo;
-        </p>
-      </div>
+      )}
     </div>
   );
 }

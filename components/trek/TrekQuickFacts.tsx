@@ -1,11 +1,11 @@
-import { TrekDetail } from "@/lib/treks";
+import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekQuickFacts({ trek }: { trek: TrekDetail }) {
   const facts = [
-    { label: "Duration", value: trek.stats.duration, color: "text-primary" },
-    { label: "Max Alt", value: trek.stats.maxAltitude, color: "text-primary" },
-    { label: "Difficulty", value: trek.stats.difficulty, color: "text-secondary" },
-    { label: "Group Size", value: trek.stats.groupSize, color: "text-primary" },
+    { label: "Duration",   value: trek.duration ? `${trek.duration} Days` : "—", color: "text-primary" },
+    { label: "Max Alt",    value: trek.maxAltitude  ?? "—",                       color: "text-primary" },
+    { label: "Difficulty", value: trek.difficulty   ?? "—",                       color: "text-secondary" },
+    { label: "Group Size", value: trek.groupSize    ?? "—",                       color: "text-primary" },
   ];
 
   return (

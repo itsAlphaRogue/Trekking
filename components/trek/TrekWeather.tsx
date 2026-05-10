@@ -1,4 +1,4 @@
-import { TrekDetail } from "@/lib/treks";
+import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekWeather({ trek }: { trek: TrekDetail }) {
   return (
@@ -24,7 +24,7 @@ export default function TrekWeather({ trek }: { trek: TrekDetail }) {
                 Avg. Temp
               </p>
               <p className="font-serif text-[32px] leading-[40px] font-semibold">
-                {trek.weather.avgTemp}
+                {trek.avgTemp ?? "—"}
               </p>
             </div>
             <div className="bg-on-primary/10 backdrop-blur-sm p-6 border border-on-primary/20">
@@ -33,7 +33,7 @@ export default function TrekWeather({ trek }: { trek: TrekDetail }) {
                 Wind Speed
               </p>
               <p className="font-serif text-[32px] leading-[40px] font-semibold">
-                {trek.weather.windSpeed}
+                {trek.windSpeed ?? "—"}
               </p>
             </div>
           </div>

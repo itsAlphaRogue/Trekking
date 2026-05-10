@@ -1,6 +1,8 @@
-import { GalleryImage } from "@/lib/treks";
+import { GalleryImage } from "@/lib/supabase/queries/treks";
 
 export default function TrekGallery({ images }: { images: GalleryImage[] }) {
+  if (images.length === 0) return null;
+
   return (
     <div className="mt-24">
       <h2 className="font-serif text-[40px] leading-[48px] font-semibold text-on-surface mb-8">
@@ -8,15 +10,15 @@ export default function TrekGallery({ images }: { images: GalleryImage[] }) {
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {images.map((img, i) => (
+        {images.map((img) => (
           <div
-            key={i}
+            key={img.id}
             className={`overflow-hidden bg-surface-container-low ${
               img.span === "wide" ? "col-span-2 aspect-video" : "aspect-square"
             }`}
           >
             <img
-              alt={img.alt}
+              alt={img.alt ?? ""}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               src={img.src}
             />

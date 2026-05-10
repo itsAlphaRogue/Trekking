@@ -5,17 +5,12 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
-  { href: "/admin/active-treks", icon: "map", label: "Active Treks" },
-  { href: "/admin/bookings", icon: "event_available", label: "Bookings" },
+  //   { href: "/admin/active-treks", icon: "map", label: "Active Treks" },
+  //   { href: "/admin/bookings", icon: "event_available", label: "Bookings" },
   { href: "/admin/treks", icon: "hiking", label: "treks" },
   { href: "/admin/regions", icon: "terrain", label: "Regions" },
-  {
-    href: "/admin/inquiries",
-    icon: "chat_bubble",
-    label: "Inquiries",
-    badge: 12,
-  },
-  { href: "/admin/finance", icon: "payments", label: "Finance" },
+  //   { href: "/admin/inquiries", icon: "chat_bubble", label: "Inquiries", badge: 12,},
+  //   { href: "/admin/finance", icon: "payments", label: "Finance" },
   { href: "/admin/settings", icon: "settings", label: "Settings" },
 ];
 
@@ -67,11 +62,11 @@ export default function AdminSidebar() {
                 {item.icon}
               </span>
               <span>{item.label}</span>
-              {item.badge && (
+              {/* {item.badge && (
                 <span className="ml-auto bg-error text-on-error px-2 py-0.5 rounded-full text-[10px] font-sans">
                   {item.badge}
                 </span>
-              )}
+              )} */}
             </Link>
           );
         })}

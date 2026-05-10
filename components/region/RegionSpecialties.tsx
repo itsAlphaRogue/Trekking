@@ -1,6 +1,11 @@
-import { Region } from "@/lib/regions";
+import { RegionDetail, RegionSpecialty } from "@/lib/supabase/queries/regions";
 
-export default function RegionSpecialties({ region }: { region: Region }) {
+interface Props {
+  region: RegionDetail;
+  specialties: RegionSpecialty[];
+}
+
+export default function RegionSpecialties({ region, specialties }: Props) {
   return (
     <section
       className="py-30"
@@ -16,7 +21,7 @@ export default function RegionSpecialties({ region }: { region: Region }) {
             <img
               className="w-full aspect-4/5 object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-xl"
               alt={`${region.name} specialty`}
-              src={region.specialtyImage}
+              src={region.specialty_image ?? "/fallback.png"}
             />
           </div>
 
@@ -30,8 +35,8 @@ export default function RegionSpecialties({ region }: { region: Region }) {
             </div>
 
             <div className="space-y-10">
-              {region.specialties.map((item) => (
-                <div key={item.number} className="flex gap-6 group">
+              {specialties.map((item) => (
+                <div key={item.id} className="flex gap-6 group">
                   <span className="font-serif text-[32px] leading-10 font-semibold text-outline-variant group-hover:text-primary transition-colors shrink-0">
                     {item.number}
                   </span>

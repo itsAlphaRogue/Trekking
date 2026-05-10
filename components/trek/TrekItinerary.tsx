@@ -1,6 +1,8 @@
-import { ItineraryDay } from "@/lib/treks";
+import { ItineraryDay } from "@/lib/supabase/queries/treks";
 
 export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
+  if (days.length === 0) return null;
+
   return (
     <div>
       <h2 className="font-serif text-[40px] leading-[48px] font-semibold text-on-surface mb-8">
@@ -10,9 +12,8 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
       <div className="space-y-0">
         {days.map((item, index) => {
           const isLast = index === days.length - 1;
-
           return (
-            <div key={index} className="relative pb-8">
+            <div key={item.id} className="relative pb-8">
               {/* Vertical connector line */}
               {!isLast && (
                 <span
@@ -23,7 +24,7 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
 
               <div className="flex gap-6">
                 {/* Node */}
-                {item.isCollapsed ? (
+                {item.is_collapsed ? (
                   <div className="relative z-10 flex items-center justify-center w-4 h-4 rounded-full bg-surface-container-highest shrink-0 mt-1.5">
                     <span className="w-1.5 h-1.5 bg-outline rounded-full" />
                   </div>
@@ -33,7 +34,7 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
 
                 {/* Content */}
                 <div>
-                  {item.isCollapsed ? (
+                  {item.is_collapsed ? (
                     <>
                       <span className="text-xs font-semibold uppercase tracking-widest text-outline font-sans">
                         {item.day}

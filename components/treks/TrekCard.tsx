@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrekListing, Difficulty } from "@/lib/trekListings";
+import { TrekListing, Difficulty } from "@/lib/supabase/queries/treks";
 
 const difficultyConfig: Record<
   Difficulty,
@@ -32,17 +32,17 @@ const difficultyConfig: Record<
   },
 };
 
-export default function TrekCard({ trip }: { trip: TrekListing }) {
-  const diff = difficultyConfig[trip.difficulty];
+export default function TrekCard({ trek }: { trek: TrekListing }) {
+  const diff = difficultyConfig[trek.difficulty];
 
   return (
     <article className="bg-surface-container-lowest rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-surface-container-high flex flex-col">
       {/* Image */}
       <div className="relative h-64 overflow-hidden">
         <img
-          alt={trip.title}
+          alt={trek.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          src={trip.image}
+          src={trek.image ?? "fallback.png"}
         />
         <div
           className={`absolute top-4 left-4 px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 font-sans ${diff.bg}`}
@@ -56,7 +56,7 @@ export default function TrekCard({ trip }: { trip: TrekListing }) {
       <div className="p-8 grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h2 className="font-serif text-2xl font-semibold text-primary leading-tight">
-            {trip.title}
+            {trek.title}
           </h2>
           <button
             aria-label="Save trek"
@@ -76,7 +76,7 @@ export default function TrekCard({ trip }: { trip: TrekListing }) {
         </div>
 
         <p className="text-base text-on-surface-variant mb-6 grow font-sans">
-          {trip.description}
+          {trek.description}
         </p>
 
         <div className="border-t border-surface-container py-6 flex items-center justify-between">
@@ -86,7 +86,7 @@ export default function TrekCard({ trip }: { trip: TrekListing }) {
                 Duration
               </span>
               <span className="text-base font-bold text-primary font-sans">
-                {trip.duration} Days
+                {trek.duration} Days
               </span>
             </div>
             <div className="flex flex-col">
@@ -94,12 +94,12 @@ export default function TrekCard({ trip }: { trip: TrekListing }) {
                 Price
               </span>
               <span className="text-base font-bold text-primary font-sans">
-                From ${trip.priceFrom.toLocaleString()}
+                From ${trek.priceFrom.toLocaleString()}
               </span>
             </div>
           </div>
           <Link
-            href={`/treks/${trip.slug}`}
+            href={`/treks/${trek.slug}`}
             className="bg-primary text-on-primary px-6 py-3 text-xs font-semibold rounded-lg hover:bg-primary-container transition-colors font-sans"
           >
             View Details
