@@ -2,10 +2,22 @@ import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekQuickFacts({ trek }: { trek: TrekDetail }) {
   const facts = [
-    { label: "Duration",   value: trek.duration ? `${trek.duration} Days` : "—", color: "text-primary" },
-    { label: "Max Alt",    value: trek.maxAltitude  ?? "—",                       color: "text-primary" },
-    { label: "Difficulty", value: trek.difficulty   ?? "—",                       color: "text-secondary" },
-    { label: "Group Size", value: trek.groupSize    ?? "—",                       color: "text-primary" },
+    {
+      label: "Duration",
+      value: trek.duration ? `${trek.duration} Days` : "—",
+      color: "text-primary",
+    },
+    { label: "Max Alt", value: trek.maxAltitude ?? "—", color: "text-primary" },
+    {
+      label: "Difficulty",
+      value: trek.difficulty ?? "—",
+      color: "text-secondary",
+    },
+    {
+      label: "Group Size",
+      value: trek.groupSize ?? "—",
+      color: "text-primary",
+    },
   ];
 
   return (
@@ -17,7 +29,9 @@ export default function TrekQuickFacts({ trek }: { trek: TrekDetail }) {
               <span className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant font-sans">
                 {fact.label}
               </span>
-              <span className={`font-serif text-[32px] leading-[40px] font-semibold ${fact.color}`}>
+              <span
+                className={`font-serif text-[32px] leading-10 font-semibold ${fact.color}`}
+              >
                 {fact.value}
               </span>
             </div>

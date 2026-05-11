@@ -54,7 +54,7 @@ export default async function TrekDetailPage({ params }: Props) {
         <TrekHero trek={trek} />
         <TrekQuickFacts trek={trek} />
 
-        <section className="max-w-7xl mx-auto px-6 md:px-8 my-20 md:my-[120px]">
+        <section className="max-w-7xl mx-auto px-6 md:px-8 my-20 md:my-30">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             <div className="lg:col-span-8">
               <TrekItinerary days={itinerary} />

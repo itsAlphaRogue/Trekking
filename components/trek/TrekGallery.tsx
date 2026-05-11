@@ -5,7 +5,7 @@ export default function TrekGallery({ images }: { images: GalleryImage[] }) {
 
   return (
     <div className="mt-24">
-      <h2 className="font-serif text-[40px] leading-[48px] font-semibold text-on-surface mb-8">
+      <h2 className="font-serif text-[40px] leading-12 font-semibold text-on-surface mb-8">
         Glimpses of the Trail
       </h2>
 

@@ -5,7 +5,7 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
 
   return (
     <div>
-      <h2 className="font-serif text-[40px] leading-[48px] font-semibold text-on-surface mb-8">
+      <h2 className="font-serif text-[40px] leading-12 font-semibold text-on-surface mb-8">
         The Expedition Itinerary
       </h2>
 
@@ -17,7 +17,7 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
               {/* Vertical connector line */}
               {!isLast && (
                 <span
-                  className="absolute left-[7px] top-6 bottom-0 w-0.5 bg-secondary-container"
+                  className="absolute left-1.75 top-6 bottom-0 w-0.5 bg-secondary-container"
                   aria-hidden="true"
                 />
               )}

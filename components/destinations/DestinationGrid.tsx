@@ -5,11 +5,6 @@ interface Props {
   regions: RegionListing[];
 }
 
-// Bento layout by position index — matches sort_order in DB
-type Layout = "large" | "small" | "large-split";
-const LAYOUTS: Layout[] = ["large", "small", "small", "large-split"];
-const getLayout = (i: number): Layout => LAYOUTS[i] ?? "small";
-
 export default function DestinationGrid({ regions }: Props) {
   const [r0, r1, r2, r3] = regions;
 
@@ -18,7 +13,7 @@ export default function DestinationGrid({ regions }: Props) {
       {/* Section header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-4">
         <div>
-          <h2 className="font-serif text-[40px] leading-[48px] font-semibold text-primary mb-4">
+          <h2 className="font-serif text-[40px] leading-12 font-semibold text-primary mb-4">
             Major Trekking Regions
           </h2>
           <p className="text-base text-on-surface-variant max-w-xl font-sans">
@@ -51,7 +46,7 @@ export default function DestinationGrid({ regions }: Props) {
                     {r0.badge}
                   </span>
                 </div>
-                <h3 className="font-serif text-[32px] leading-[40px] font-semibold text-primary mb-4">
+                <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-4">
                   {r0.name}
                 </h3>
                 <p className="text-base text-on-surface-variant font-sans">
@@ -71,7 +66,7 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 2 — small (4 cols) */}
         {r1 && (
           <div className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100">
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-4/5 overflow-hidden">
               <img
                 alt={r1.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -82,7 +77,7 @@ export default function DestinationGrid({ regions }: Props) {
               <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
                 {r1.badge}
               </span>
-              <h3 className="font-serif text-[32px] leading-[40px] font-semibold text-primary mb-3">
+              <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r1.name}
               </h3>
               <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
@@ -101,7 +96,7 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 3 — small (4 cols) */}
         {r2 && (
           <div className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100">
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-4/5 overflow-hidden">
               <img
                 alt={r2.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -112,7 +107,7 @@ export default function DestinationGrid({ regions }: Props) {
               <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
                 {r2.badge}
               </span>
-              <h3 className="font-serif text-[32px] leading-[40px] font-semibold text-primary mb-3">
+              <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r2.name}
               </h3>
               <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
@@ -131,7 +126,7 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 4 — large split (8 cols) */}
         {r3 && (
           <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-lowest border border-stone-100">
-            <div className="grid md:grid-cols-2 h-full min-h-[400px]">
+            <div className="grid md:grid-cols-2 h-full min-h-100">
               <div className="overflow-hidden">
                 <img
                   alt={r3.name}
@@ -145,7 +140,7 @@ export default function DestinationGrid({ regions }: Props) {
                     {r3.badge}
                   </span>
                 </div>
-                <h3 className="font-serif text-[32px] leading-[40px] font-semibold text-primary mb-4">
+                <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-4">
                   {r3.name}
                 </h3>
                 <p className="text-base text-on-surface-variant mb-8 font-sans">
@@ -168,7 +163,7 @@ export default function DestinationGrid({ regions }: Props) {
             key={r.slug}
             className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100"
           >
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-4/5 overflow-hidden">
               <img
                 alt={r.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -179,7 +174,7 @@ export default function DestinationGrid({ regions }: Props) {
               <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
                 {r.badge}
               </span>
-              <h3 className="font-serif text-[32px] leading-[40px] font-semibold text-primary mb-3">
+              <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r.name}
               </h3>
               <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">

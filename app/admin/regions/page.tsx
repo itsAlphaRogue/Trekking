@@ -247,7 +247,7 @@ const PreviewImg = ({ r, cls }: { r: EditableRegion; cls: string }) => (
 );
 
 const PreviewBadge = ({ r }: { r: EditableRegion }) => (
-  <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+  <div className="absolute bottom-0 left-0 right-0 p-2 bg-linear-to-t from-black/70 to-transparent">
     <p className="text-[9px] font-semibold text-white font-sans truncate">
       {r.name}
     </p>
@@ -1187,7 +1187,7 @@ export default function AdminRegionsPage() {
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 p-3">
                 <p className="text-[9px] font-semibold text-white/60 uppercase tracking-wider font-sans">
                   {regions[0].badge}
@@ -1223,7 +1223,7 @@ export default function AdminRegionsPage() {
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 p-3">
                 <p className="text-[9px] font-semibold text-white/60 uppercase tracking-wider font-sans">
                   {regions[1].badge}
@@ -1261,7 +1261,7 @@ export default function AdminRegionsPage() {
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 p-3">
                 <p className="text-[9px] font-semibold text-white/60 uppercase tracking-wider font-sans">
                   {regions[2].badge}
@@ -1347,7 +1347,7 @@ export default function AdminRegionsPage() {
                   </span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 p-3">
                 <p className="text-[9px] font-semibold text-white/60 uppercase tracking-wider font-sans">
                   {region.badge}
