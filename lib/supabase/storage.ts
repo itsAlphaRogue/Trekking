@@ -1,37 +1,31 @@
-import { createClient } from "@/lib/supabase/client";
-
 type Bucket = "trek-images" | "region-images";
 
 /**
- * Upload a file to Supabase Storage and return its public URL.
- * Used in the admin image upload components.
- *
- * @param file     - The File object from the input / drop event
- * @param bucket   - "trek-images" or "region-images"
- * @param path     - Storage path e.g. "treks/everest-base-camp/hero.jpg"
- * @returns        - Public URL string or throws on error
+ * Upload a file via the server-side API route.
+ * This bypasses client-side RLS issues by using the Service Role on the server.
  */
 export async function uploadImage(
   file: File,
   bucket: Bucket,
   path: string
 ): Promise<string> {
-  const supabase = createClient();
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("bucket", bucket);
+  formData.append("path", path);
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, {
-      upsert: true,           // overwrite if same path
-      contentType: file.type,
-    });
+  const res = await fetch("/api/admin/upload", {
+    method: "POST",
+    body: formData,
+  });
 
-  if (error) throw new Error(`Upload failed: ${error.message}`);
+  const data = await res.json();
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(bucket).getPublicUrl(data.path);
+  if (!res.ok) {
+    throw new Error(data.error || "Upload failed");
+  }
 
-  return publicUrl;
+  return data.publicUrl;
 }
 
 /**
@@ -63,22 +57,20 @@ export function regionImagePath(
 }
 
 /**
- * Delete an image from storage by its public URL.
- * Extracts the path from the URL automatically.
+ * Delete an image from storage via the server-side API route.
  */
 export async function deleteImage(
   publicUrl: string,
   bucket: Bucket
 ): Promise<void> {
-  const supabase = createClient();
+  const res = await fetch("/api/admin/delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ publicUrl, bucket }),
+  });
 
-  // Extract path from URL: everything after /storage/v1/object/public/{bucket}/
-  const marker = `/object/public/${bucket}/`;
-  const idx = publicUrl.indexOf(marker);
-  if (idx === -1) return; // not a storage URL — skip
-
-  const path = publicUrl.slice(idx + marker.length);
-
-  const { error } = await supabase.storage.from(bucket).remove([path]);
-  if (error) console.error("deleteImage error:", error.message);
+  if (!res.ok) {
+    const data = await res.json();
+    console.error("deleteImage error:", data.error || "Deletion failed");
+  }
 }
