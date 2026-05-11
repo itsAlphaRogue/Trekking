@@ -18,7 +18,7 @@ export default function TrekGallery({ images }: { images: GalleryImage[] }) {
             }`}
           >
             <img
-              alt={img.alt ?? ""}
+              alt={img.alt ?? "/fallback.png"}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               src={img.src}
             />

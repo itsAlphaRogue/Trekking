@@ -7,7 +7,7 @@ export default function TrekHero({ trek }: { trek: TrekDetail }) {
         <img
           alt={trek.title}
           className="w-full h-full object-cover"
-          src={trek.heroImage ?? "/fallback.png"}
+          src={trek.heroImage || "/fallback.png"}
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
       </div>

@@ -1,4 +1,8 @@
+"use server";
+
 import { createClient } from "@/lib/supabase/server";
+
+
 import { createClient as createBrowserClient } from "@supabase/supabase-js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -75,9 +79,10 @@ export interface TrekFilters {
   maxDuration?: number;
   sortBy?: "popular" | "price_asc" | "price_desc" | "duration_asc";
   page?: number;
+  isFeatured?: boolean;
 }
 
-export const TREKS_PER_PAGE = 8;
+const TREKS_PER_PAGE = 8;
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -128,6 +133,11 @@ export async function queryTreks(filters: TrekFilters = {}): Promise<{
   // Duration filter
   if (filters.maxDuration !== undefined) {
     query = query.lte("duration", filters.maxDuration);
+  }
+
+  // Featured filter
+  if (filters.isFeatured !== undefined) {
+    query = query.eq("is_featured", filters.isFeatured);
   }
 
   // Sort

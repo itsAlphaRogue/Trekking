@@ -21,7 +21,7 @@ export default function RegionSpecialties({ region, specialties }: Props) {
             <img
               className="w-full aspect-4/5 object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-xl"
               alt={`${region.name} specialty`}
-              src={region.specialty_image ?? "/fallback.png"}
+              src={region.specialty_image || "/fallback.png"}
             />
           </div>
 

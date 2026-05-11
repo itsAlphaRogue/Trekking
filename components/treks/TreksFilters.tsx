@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
-import { Difficulty } from "@/lib/trekListings";
+import { Difficulty } from "@/lib/supabase/queries/treks";
 
 const DIFFICULTIES: Difficulty[] = [
   "Easy",
@@ -37,11 +37,29 @@ export default function TreksFilters() {
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice);
   const [duration, setDuration] = useState(currentMaxDuration);
 
-  // Keep state in sync if URL changes externally
-  useEffect(() => setQ(currentQ), [currentQ]);
-  useEffect(() => setMinPrice(currentMinPrice), [currentMinPrice]);
-  useEffect(() => setMaxPrice(currentMaxPrice), [currentMaxPrice]);
-  useEffect(() => setDuration(currentMaxDuration), [currentMaxDuration]);
+  // Keep state in sync if URL changes externally (e.g. Back button)
+  // We use the "adjusting state based on props" pattern during render to avoid useEffect warnings
+  const [prevCurrentQ, setPrevCurrentQ] = useState(currentQ);
+  const [prevMinPrice, setPrevMinPrice] = useState(currentMinPrice);
+  const [prevMaxPrice, setPrevMaxPrice] = useState(currentMaxPrice);
+  const [prevDuration, setPrevDuration] = useState(currentMaxDuration);
+
+  if (currentQ !== prevCurrentQ) {
+    setPrevCurrentQ(currentQ);
+    setQ(currentQ);
+  }
+  if (currentMinPrice !== prevMinPrice) {
+    setPrevMinPrice(currentMinPrice);
+    setMinPrice(currentMinPrice);
+  }
+  if (currentMaxPrice !== prevMaxPrice) {
+    setPrevMaxPrice(currentMaxPrice);
+    setMaxPrice(currentMaxPrice);
+  }
+  if (currentMaxDuration !== prevDuration) {
+    setPrevDuration(currentMaxDuration);
+    setDuration(currentMaxDuration);
+  }
 
   const updateParam = useCallback(
     (key: string, value: string | string[] | null) => {
@@ -74,20 +92,22 @@ export default function TreksFilters() {
 
   // ✅ Debounce: Search
   useEffect(() => {
+    if (q === currentQ) return;
     const t = setTimeout(() => {
       updateParam("q", q);
     }, 800);
     return () => clearTimeout(t);
-  }, [q]);
+  }, [q, currentQ, updateParam]);
 
   // ✅ Debounce: Price
   useEffect(() => {
+    if (minPrice === currentMinPrice && maxPrice === currentMaxPrice) return;
     const t = setTimeout(() => {
       updateParam("minPrice", minPrice);
       updateParam("maxPrice", maxPrice);
     }, 400);
     return () => clearTimeout(t);
-  }, [minPrice, maxPrice]);
+  }, [minPrice, maxPrice, currentMinPrice, currentMaxPrice, updateParam]);
 
   const handleApply = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

@@ -42,7 +42,7 @@ export default function TrekCard({ trek }: { trek: TrekListing }) {
         <img
           alt={trek.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          src={trek.image ?? "fallback.png"}
+          src={trek.image || "fallback.png"}
         />
         <div
           className={`absolute top-4 left-4 px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 font-sans ${diff.bg}`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,14 +12,13 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Show error when middleware or layout redirected here with ?error=not_admin
-  useEffect(() => {
-    if (searchParams.get("error") === "not_admin") {
-      setError(
-        "Your account does not have admin access. Contact the site owner to be granted access.",
-      );
-    }
-  }, [searchParams]);
+  // Derived error from middleware or layout redirect (?error=not_admin)
+  const redirectError =
+    searchParams.get("error") === "not_admin"
+      ? "Your account does not have admin access. Contact the site owner to be granted access."
+      : null;
+
+  const displayError = error || redirectError;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,12 +124,12 @@ function LoginForm() {
               />
             </div>
 
-            {error && (
+            {displayError && (
               <div className="bg-error-container text-error rounded px-4 py-3 text-sm font-sans flex items-start gap-2">
                 <span className="material-symbols-outlined text-base shrink-0 mt-0.5">
                   error
                 </span>
-                <span>{error}</span>
+                <span>{displayError}</span>
               </div>
             )}
 

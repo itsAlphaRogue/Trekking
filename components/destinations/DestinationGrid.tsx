@@ -41,7 +41,7 @@ export default function DestinationGrid({ regions }: Props) {
               <img
                 alt={r0.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r0.heroImage ?? "fallback.png"}
+                src={r0.heroImage || "fallback.png"}
               />
             </div>
             <div className="p-8 md:p-10 flex flex-col md:flex-row justify-between items-start gap-6">
@@ -75,7 +75,7 @@ export default function DestinationGrid({ regions }: Props) {
               <img
                 alt={r1.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r1.heroImage ?? "fallback.png"}
+                src={r1.heroImage || "fallback.png"}
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
@@ -105,7 +105,7 @@ export default function DestinationGrid({ regions }: Props) {
               <img
                 alt={r2.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r2.heroImage ?? "fallback.png"}
+                src={r2.heroImage || "fallback.png"}
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
@@ -136,7 +136,7 @@ export default function DestinationGrid({ regions }: Props) {
                 <img
                   alt={r3.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  src={r3.heroImage ?? "fallback.png"}
+                  src={r3.heroImage || "fallback.png"}
                 />
               </div>
               <div className="p-8 md:p-10 flex flex-col justify-center">
@@ -172,7 +172,7 @@ export default function DestinationGrid({ regions }: Props) {
               <img
                 alt={r.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r.heroImage ?? "fallback.png"}
+                src={r.heroImage || "fallback.png"}
               />
             </div>
             <div className="p-8 flex flex-col flex-1">

@@ -76,7 +76,7 @@ export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
               <img
                 alt={trek.guideName}
                 className="w-full h-full object-cover"
-                src={trek.guideImage ?? "/fallback.png"}
+                src={trek.guideImage || "/fallback.png"}
               />
             </div>
             <div>

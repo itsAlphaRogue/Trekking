@@ -1,58 +1,73 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { adminGetDashboardStats } from "@/lib/supabase/queries/admin";
+
 interface Stat {
   icon: string;
   iconBg: string;
   iconColor: string;
   label: string;
   value: string;
-  badgeText: string;
-  badgeClass: string;
+  badgeText?: string;
+  badgeClass?: string;
   dark?: boolean;
   bgImage?: string;
 }
 
-const stats: Stat[] = [
-  {
-    icon: "confirmation_number",
-    iconBg: "bg-primary-container/10",
-    iconColor: "text-primary-container",
-    label: "Total Bookings",
-    value: "1,284",
-    badgeText: "+12%",
-    badgeClass: "bg-secondary-container text-on-secondary-fixed-variant",
-  },
-  {
-    icon: "hiking",
-    iconBg: "bg-secondary-container/20",
-    iconColor: "text-secondary",
-    label: "Active Treks",
-    value: "24",
-    badgeText: "+5%",
-    badgeClass: "bg-secondary-container text-on-secondary-fixed-variant",
-  },
-  {
-    icon: "contact_support",
-    iconBg: "bg-tertiary-fixed/20",
-    iconColor: "text-on-tertiary-fixed-variant",
-    label: "Pending Inquiries",
-    value: "56",
-    badgeText: "-2%",
-    badgeClass: "bg-error-container text-error",
-  },
-  {
-    icon: "account_balance_wallet",
-    iconBg: "bg-on-primary-container/20",
-    iconColor: "text-on-primary",
-    label: "Monthly Revenue",
-    value: "$84,200",
-    badgeText: "+18%",
-    badgeClass: "bg-primary-fixed text-on-primary-fixed",
-    dark: true,
-    bgImage:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDOT_BvVt_iCQi_NFFKCsMnq_gvVOgFnq40Acf71VbUX3I0Cky_tiEr9jp4s6xWyRIrIgGia-02_4TOLGJm9wUWt7IRNWP8_zZz90COvkaIm9eGK197wc8fFye54ShJA7DUhrjHu73eV0_iJw8JqExAyYAMsJqeU1eO9_IDbJmm53RGO7YTxRSwLjOfnYZv6qAXn-eFB7AQZYo5gneuqBeVUAD3gXJK4iLXxjhZs3HKiaUiHslLXUfImPasXiJ2XKym2mIZBcjdjJvd",
-  },
-];
-
 export default function DashboardStats() {
+  const [statsData, setStatsData] = useState<{
+    publishedTreks: number;
+    publishedRegions: number;
+    draftTreks: number;
+  } | null>(null);
+
+  useEffect(() => {
+    adminGetDashboardStats().then(setStatsData);
+  }, []);
+
+  const stats: Stat[] = [
+    {
+      icon: "hiking",
+      iconBg: "bg-primary-container/10",
+      iconColor: "text-primary-container",
+      label: "Published Treks",
+      value: statsData?.publishedTreks.toString() || "...",
+      badgeText: "Live",
+      badgeClass: "bg-secondary-container text-on-secondary-fixed-variant",
+    },
+    {
+      icon: "explore",
+      iconBg: "bg-secondary-container/20",
+      iconColor: "text-secondary",
+      label: "Published Regions",
+      value: statsData?.publishedRegions.toString() || "...",
+      badgeText: "Active",
+      badgeClass: "bg-secondary-container text-on-secondary-fixed-variant",
+    },
+    {
+      icon: "edit_note",
+      iconBg: "bg-tertiary-fixed/20",
+      iconColor: "text-on-tertiary-fixed-variant",
+      label: "Draft Treks",
+      value: statsData?.draftTreks.toString() || "...",
+      badgeText: "Pending",
+      badgeClass: "bg-surface-container-highest text-on-surface-variant",
+    },
+    {
+      icon: "account_balance_wallet",
+      iconBg: "bg-on-primary-container/20",
+      iconColor: "text-on-primary",
+      label: "System Status",
+      value: "Online",
+      badgeText: "Stable",
+      badgeClass: "bg-primary-fixed text-on-primary-fixed",
+      dark: true,
+      bgImage:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuDOT_BvVt_iCQi_NFFKCsMnq_gvVOgFnq40Acf71VbUX3I0Cky_tiEr9jp4s6xWyRIrIgGia-02_4TOLGJm9wUWt7IRNWP8_zZz90COvkaIm9eGK197wc8fFye54ShJA7DUhrjHu73eV0_iJw8JqExAyYAMsJqeU1eO9_IDbJmm53RGO7YTxRSwLjOfnYZv6qAXn-eFB7AQZYo5gneuqBeVUAD3gXJK4iLXxjhZs3HKiaUiHslLXUfImPasXiJ2XKym2mIZBcjdjJvd",
+    },
+  ];
+
   return (
     <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
       {stats.map((stat) => (
@@ -85,11 +100,13 @@ export default function DashboardStats() {
                   {stat.icon}
                 </span>
               </div>
-              <span
-                className={`text-[11px] font-semibold px-2 py-1 rounded font-sans ${stat.badgeClass}`}
-              >
-                {stat.badgeText}
-              </span>
+              {stat.badgeText && (
+                <span
+                  className={`text-[11px] font-semibold px-2 py-1 rounded font-sans ${stat.badgeClass}`}
+                >
+                  {stat.badgeText}
+                </span>
+              )}
             </div>
 
             <p

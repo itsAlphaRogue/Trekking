@@ -11,12 +11,14 @@ export const metadata: Metadata = {
 const noto = Noto_Serif({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
 });
 
 const vietnam = Be_Vietnam_Pro({
   subsets: ["latin"],
   variable: "--font-body",
   weight: "400",
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -32,7 +34,9 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body>{children}</body>
+      <body className={`${noto.variable} ${vietnam.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }

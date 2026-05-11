@@ -67,7 +67,7 @@ export default function RegionTreks({ treks }: Props) {
                 <img
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={trek.title}
-                  src={trek.image ?? "/fallback.png"}
+                  src={trek.image || "/fallback.png"}
                 />
                 <div
                   className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur font-sans ${getDifficultyColor(trek.difficulty)}`}

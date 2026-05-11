@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { submitInquiry } from "@/lib/supabase/queries/inquiries";
 
 const TREK_OPTIONS = [
   "Everest Base Camp Trek",
@@ -16,14 +17,28 @@ const TREK_OPTIONS = [
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    trek: TREK_OPTIONS[0],
+    message: "",
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // TODO: wire to Supabase or email API
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setSubmitted(true);
+    setError(null);
+    try {
+      await submitInquiry(form);
+      setSubmitted(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -73,6 +88,8 @@ export default function ContactForm() {
             <input
               required
               type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
               placeholder="Tenzing Norgay"
             />
@@ -84,6 +101,8 @@ export default function ContactForm() {
             <input
               required
               type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
               placeholder="explorer@himalaya.com"
             />
@@ -96,9 +115,15 @@ export default function ContactForm() {
             Primary Trek Interest
           </label>
           <div className="relative">
-            <select className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans appearance-none cursor-pointer">
+            <select
+              value={form.trek}
+              onChange={(e) => setForm({ ...form, trek: e.target.value })}
+              className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans appearance-none cursor-pointer"
+            >
               {TREK_OPTIONS.map((opt) => (
-                <option key={opt}>{opt}</option>
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
               ))}
             </select>
             <span className="absolute right-0 top-3 text-outline pointer-events-none">
@@ -119,15 +144,25 @@ export default function ContactForm() {
             Message
           </label>
           <textarea
+            required
             rows={4}
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
             className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50 resize-none"
             placeholder="Tell us about your mountaineering experience and preferred dates..."
           />
         </div>
 
+        {error && (
+          <p className="text-sm text-error font-sans flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">error</span>
+            {error}
+          </p>
+        )}
+
         <button
-          type="submit"
           disabled={loading}
+          type="submit"
           className="bg-primary text-on-primary px-10 py-4 font-serif text-lg hover:bg-primary-container transition-colors shadow-lg active:scale-95 duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? "Sending…" : "Send Inquiry"}

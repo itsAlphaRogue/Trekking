@@ -1,29 +1,56 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { regions as initialRegions, Region } from "@/lib/regions";
+import { useState, useRef, useCallback, useEffect } from "react";
+import {
+  adminGetRegions,
+  adminUpsertRegion,
+  adminDeleteRegion,
+  adminGetSpecialties,
+  adminUpsertSpecialty,
+  adminDeleteSpecialty,
+} from "@/lib/supabase/queries/admin";
+import {
+  uploadImage,
+  regionImagePath,
+  deleteImage,
+} from "@/lib/supabase/storage";
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const MAX_MB = 8;
+const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
+const BENTO_LAYOUTS_FIXED = ["large", "small", "small", "large-split"] as const;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-// The subset of Region fields editable from this UI
-// (treks are managed from the Packages page)
-type EditableRegion = Pick<
-  Region,
-  | "slug"
-  | "name"
-  | "tagline"
-  | "heroLabel"
-  | "heroImage"
-  | "description"
-  | "specialtyImage"
-  | "stats"
-> & {
-  badge: string; // shown on the bento card
-  cardDescription: string; // short blurb shown on the bento card (≠ full description)
+type Specialty = {
+  id?: string;
+  region_id: string;
+  number: string;
+  title: string;
+  description: string;
+  sort_order: number;
 };
 
-// Bento layout — first 4 positions are fixed; 5th+ overflow as "small"
-const BENTO_LAYOUTS_FIXED = ["large", "small", "small", "large-split"] as const;
+type EditableRegion = {
+  id?: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  hero_label: string;
+  hero_image: string;
+  description: string;
+  specialty_image: string;
+  badge: string;
+  card_description: string;
+  elevation: string;
+  difficulty: string;
+  best_season: string;
+  sort_order: number;
+  is_published: boolean;
+  specialties?: Specialty[];
+};
+
 type BentoLayout = "large" | "small" | "large-split";
 
 function getBentoLayout(index: number): BentoLayout {
@@ -41,49 +68,28 @@ function toBentoLabel(layout: BentoLayout): string {
   }
 }
 
-function toEditable(r: Region): EditableRegion {
-  return {
-    slug: r.slug,
-    name: r.name,
-    tagline: r.tagline,
-    heroLabel: r.heroLabel,
-    heroImage: r.heroImage,
-    description: r.description,
-    specialtyImage: r.specialtyImage,
-    stats: { ...r.stats },
-    badge:
-      r.slug === "everest"
-        ? "Iconic"
-        : r.slug === "annapurna"
-          ? "Diverse Landscapes"
-          : r.slug === "langtang"
-            ? "The Valley of Glaciers"
-            : "Off the Beaten Path",
-    cardDescription:
-      r.description.slice(0, 130) + (r.description.length > 130 ? "…" : ""),
-  };
-}
-
 // ─── Image Uploader ────────────────────────────────────────────────────────────
 
 function ImageUploader({
   label,
   value,
   onChange,
+  slug,
+  type,
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
+  slug: string;
+  type: "hero" | "specialty";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const MAX_MB = 8;
-  const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
+  const [uploading, setUploading] = useState(false);
 
   const processFile = useCallback(
-    (file: File) => {
+    async (file: File) => {
       setError(null);
       if (!ACCEPTED.includes(file.type)) {
         setError("Only JPG, PNG, or WebP files are accepted.");
@@ -93,19 +99,23 @@ function ImageUploader({
         setError(`File must be under ${MAX_MB}MB.`);
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        onChange(e.target?.result as string);
-        // TODO (Supabase Storage):
-        // const { data } = await supabase.storage.from("region-images")
-        //   .upload(`regions/${Date.now()}-${file.name}`, file, { upsert: true });
-        // const { data: { publicUrl } } = supabase.storage
-        //   .from("region-images").getPublicUrl(data.path);
-        // onChange(publicUrl);
-      };
-      reader.readAsDataURL(file);
+
+      setUploading(true);
+      try {
+        const path = regionImagePath(slug || "temp", file, type);
+        const url = await uploadImage(file, "region-images", path);
+        onChange(url);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred during upload.");
+        }
+      } finally {
+        setUploading(false);
+      }
     },
-    [onChange],
+    [onChange, slug, type],
   );
 
   const handleDrop = (e: React.DragEvent) => {
@@ -115,8 +125,15 @@ function ImageUploader({
     if (file) processFile(file);
   };
 
-  const clear = (e: React.MouseEvent) => {
+  const clear = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (value) {
+      try {
+        await deleteImage(value, "region-images");
+      } catch (err) {
+        console.error("Failed to delete image from storage:", err);
+      }
+    }
     onChange("");
     setError(null);
     if (inputRef.current) inputRef.current.value = "";
@@ -134,18 +151,20 @@ function ImageUploader({
           <div className="absolute inset-0 bg-inverse-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
             <button
               type="button"
+              disabled={uploading}
               onClick={() => inputRef.current?.click()}
-              className="flex items-center gap-2 bg-surface text-on-surface px-3 py-1.5 rounded text-xs font-semibold font-sans hover:bg-surface-container-low transition-colors"
+              className="flex items-center gap-2 bg-surface text-on-surface px-3 py-1.5 rounded text-xs font-semibold font-sans hover:bg-surface-container-low transition-colors disabled:opacity-50"
             >
               <span className="material-symbols-outlined text-sm">
                 swap_horiz
               </span>
-              Replace
+              {uploading ? "Uploading..." : "Replace"}
             </button>
             <button
               type="button"
+              disabled={uploading}
               onClick={clear}
-              className="flex items-center gap-2 bg-error text-on-error px-3 py-1.5 rounded text-xs font-semibold font-sans hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 bg-error text-on-error px-3 py-1.5 rounded text-xs font-semibold font-sans hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               <span className="material-symbols-outlined text-sm">delete</span>
               Remove
@@ -155,6 +174,7 @@ function ImageUploader({
       ) : (
         <button
           type="button"
+          disabled={uploading}
           onClick={() => inputRef.current?.click()}
           onDragOver={(e) => {
             e.preventDefault();
@@ -166,15 +186,19 @@ function ImageUploader({
             dragOver
               ? "border-primary bg-primary-fixed/20"
               : "border-outline-variant bg-surface-container-low hover:border-primary hover:bg-surface-container"
-          }`}
+          } ${uploading ? "opacity-50 cursor-wait" : ""}`}
         >
           <span
             className={`material-symbols-outlined text-2xl ${dragOver ? "text-primary" : "text-outline"}`}
           >
-            {dragOver ? "file_download" : "cloud_upload"}
+            {uploading ? "sync" : dragOver ? "file_download" : "cloud_upload"}
           </span>
           <p className="text-xs font-semibold text-on-surface font-sans">
-            {dragOver ? "Drop to upload" : "Drag & drop or click"}
+            {uploading
+              ? "Uploading..."
+              : dragOver
+                ? "Drop to upload"
+                : "Drag & drop or click"}
           </p>
           <p className="text-[10px] text-outline font-sans">
             JPG, PNG, WebP · Max {MAX_MB}MB
@@ -202,6 +226,35 @@ function ImageUploader({
   );
 }
 
+// ─── Bento Preview Components ──────────────────────────────────────────────
+
+const PreviewImg = ({ r, cls }: { r: EditableRegion; cls: string }) => (
+  <div className={`${cls} overflow-hidden`}>
+    {r.hero_image ? (
+      <img
+        src={r.hero_image}
+        alt={r.name}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <div className="w-full h-full bg-surface-container-highest flex items-center justify-center">
+        <span className="material-symbols-outlined text-outline-variant">
+          image
+        </span>
+      </div>
+    )}
+  </div>
+);
+
+const PreviewBadge = ({ r }: { r: EditableRegion }) => (
+  <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+    <p className="text-[9px] font-semibold text-white font-sans truncate">
+      {r.name}
+    </p>
+    <p className="text-[8px] text-white/70 font-sans truncate">{r.badge}</p>
+  </div>
+);
+
 // ─── Bento Preview (miniature) ────────────────────────────────────────────────
 
 function BentoPreview({
@@ -214,33 +267,6 @@ function BentoPreview({
   const cardBase =
     "relative overflow-hidden bg-surface-container-high transition-all";
   const highlight = "ring-2 ring-primary";
-
-  const Img = ({ r, cls }: { r: EditableRegion; cls: string }) => (
-    <div className={`${cls} overflow-hidden`}>
-      {r.heroImage ? (
-        <img
-          src={r.heroImage}
-          alt={r.name}
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <div className="w-full h-full bg-surface-container-highest flex items-center justify-center">
-          <span className="material-symbols-outlined text-outline-variant">
-            image
-          </span>
-        </div>
-      )}
-    </div>
-  );
-
-  const Badge = ({ r }: { r: EditableRegion }) => (
-    <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
-      <p className="text-[9px] font-semibold text-white font-sans truncate">
-        {r.name}
-      </p>
-      <p className="text-[8px] text-white/70 font-sans truncate">{r.badge}</p>
-    </div>
-  );
 
   const [r0, r1, r2, r3] = regions;
   const overflow = regions.slice(4);
@@ -256,16 +282,16 @@ function BentoPreview({
           <div
             className={`col-span-8 h-16 ${cardBase} ${r0.slug === highlightSlug ? highlight : ""}`}
           >
-            <Img r={r0} cls="w-full h-full" />
-            <Badge r={r0} />
+            <PreviewImg r={r0} cls="w-full h-full" />
+            <PreviewBadge r={r0} />
           </div>
         )}
         {r1 && (
           <div
             className={`col-span-4 h-16 ${cardBase} ${r1.slug === highlightSlug ? highlight : ""}`}
           >
-            <Img r={r1} cls="w-full h-full" />
-            <Badge r={r1} />
+            <PreviewImg r={r1} cls="w-full h-full" />
+            <PreviewBadge r={r1} />
           </div>
         )}
         {/* Row 2: small (4) + large-split (8) */}
@@ -273,8 +299,8 @@ function BentoPreview({
           <div
             className={`col-span-4 h-16 ${cardBase} ${r2.slug === highlightSlug ? highlight : ""}`}
           >
-            <Img r={r2} cls="w-full h-full" />
-            <Badge r={r2} />
+            <PreviewImg r={r2} cls="w-full h-full" />
+            <PreviewBadge r={r2} />
           </div>
         )}
         {r3 && (
@@ -282,7 +308,7 @@ function BentoPreview({
             className={`col-span-8 h-16 ${cardBase} ${r3.slug === highlightSlug ? highlight : ""}`}
           >
             <div className="grid grid-cols-2 h-full">
-              <Img r={r3} cls="h-full" />
+              <PreviewImg r={r3} cls="h-full" />
               <div className="bg-surface-container-highest flex items-center justify-center p-1">
                 <p className="text-[8px] font-semibold text-primary font-sans text-center truncate">
                   {r3.name}
@@ -300,8 +326,8 @@ function BentoPreview({
             key={r.slug}
             className={`col-span-4 h-16 ${cardBase} ${r.slug === highlightSlug ? highlight : ""}`}
           >
-            <Img r={r} cls="w-full h-full" />
-            <Badge r={r} />
+            <PreviewImg r={r} cls="w-full h-full" />
+            <PreviewBadge r={r} />
             <div className="absolute top-1 right-1 bg-surface-container/80 rounded text-[7px] font-semibold font-sans px-1 text-on-tertiary-fixed-variant">
               +{i + 5}
             </div>
@@ -382,7 +408,7 @@ function RegionDrawer({
   initial: EditableRegion | null;
   allRegions: EditableRegion[];
   position: number;
-  onSave: (data: EditableRegion) => void;
+  onSave: (data: EditableRegion) => Promise<void>;
   onClose: () => void;
 }) {
   const isEdit = !!initial;
@@ -391,28 +417,41 @@ function RegionDrawer({
       slug: "",
       name: "",
       tagline: "",
-      heroLabel: "",
-      heroImage: "",
+      hero_label: "",
+      hero_image: "",
       description: "",
-      specialtyImage: "",
-      stats: { elevation: "", difficulty: "", bestSeason: "" },
+      specialty_image: "",
+      elevation: "",
+      difficulty: "",
+      best_season: "",
       badge: "",
-      cardDescription: "",
+      card_description: "",
+      sort_order: position,
+      is_published: true,
+      specialties: [],
     },
   );
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
-  const [tab, setTab] = useState<"basic" | "images" | "stats">("basic");
+  const [tab, setTab] = useState<"basic" | "images" | "stats" | "specialties">(
+    "basic",
+  );
+  const [saving, setSaving] = useState(false);
 
-  const set = <K extends keyof EditableRegion>(
+  // Fetch specialties if editing
+  useEffect(() => {
+    if (isEdit && initial?.id) {
+      adminGetSpecialties(initial.id).then((specs) => {
+        setForm((f) => ({ ...f, specialties: specs }));
+      });
+    }
+  }, [isEdit, initial?.id]);
+
+  const setField = <K extends keyof EditableRegion>(
     key: K,
     val: EditableRegion[K],
   ) => {
     setForm((f) => ({ ...f, [key]: val }));
     setErrors((e) => ({ ...e, [key]: undefined }));
-  };
-
-  const setStat = (key: keyof Region["stats"], val: string) => {
-    setForm((f) => ({ ...f, stats: { ...f.stats, [key]: val } }));
   };
 
   const autoSlug = (name: string) =>
@@ -427,12 +466,22 @@ function RegionDrawer({
     if (!form.slug.trim()) e.slug = "Slug is required";
     if (!form.tagline.trim()) e.tagline = "Tagline is required";
     if (!form.badge.trim()) e.badge = "Badge label is required";
-    if (!form.cardDescription.trim())
+    if (!form.card_description.trim())
       e.cardDescription = "Card description is required";
     if (!form.description.trim())
       e.description = "Full description is required";
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validate()) return;
+    setSaving(true);
+    try {
+      await onSave(form);
+    } finally {
+      setSaving(false);
+    }
   };
 
   // Build preview regions with the current form applied
@@ -473,12 +522,12 @@ function RegionDrawer({
         </div>
 
         {/* Tab bar */}
-        <div className="flex border-b border-outline-variant shrink-0">
-          {(["basic", "images", "stats"] as const).map((t) => (
+        <div className="flex border-b border-outline-variant shrink-0 overflow-x-auto no-scrollbar">
+          {(["basic", "images", "stats", "specialties"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 py-3 text-xs font-semibold uppercase tracking-widest font-sans transition-colors ${
+              className={`flex-1 min-w-fit px-4 py-3 text-[10px] font-semibold uppercase tracking-widest font-sans transition-colors whitespace-nowrap ${
                 tab === t
                   ? "border-b-2 border-primary text-primary"
                   : "text-on-surface-variant hover:text-primary"
@@ -488,7 +537,9 @@ function RegionDrawer({
                 ? "Content"
                 : t === "images"
                   ? "Images"
-                  : "Stats & Details"}
+                  : t === "stats"
+                    ? "Stats"
+                    : "Specialties"}
             </button>
           ))}
         </div>
@@ -506,8 +557,8 @@ function RegionDrawer({
                 <input
                   value={form.name}
                   onChange={(e) => {
-                    set("name", e.target.value);
-                    if (!isEdit) set("slug", autoSlug(e.target.value));
+                    setField("name", e.target.value);
+                    if (!isEdit) setField("slug", autoSlug(e.target.value));
                   }}
                   placeholder="e.g. Everest Region"
                   className={`w-full bg-surface-container-lowest border-b px-0 py-3 text-sm font-sans focus:outline-none transition-colors ${
@@ -536,7 +587,7 @@ function RegionDrawer({
                     <input
                       value={form.slug}
                       onChange={(e) =>
-                        set(
+                        setField(
                           "slug",
                           e.target.value
                             .toLowerCase()
@@ -562,8 +613,8 @@ function RegionDrawer({
                     Hero Label
                   </label>
                   <input
-                    value={form.heroLabel}
-                    onChange={(e) => set("heroLabel", e.target.value)}
+                    value={form.hero_label}
+                    onChange={(e) => setField("hero_label", e.target.value)}
                     placeholder="e.g. Nepal Sanctuary"
                     className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
                   />
@@ -580,7 +631,7 @@ function RegionDrawer({
                 </label>
                 <input
                   value={form.tagline}
-                  onChange={(e) => set("tagline", e.target.value)}
+                  onChange={(e) => setField("tagline", e.target.value)}
                   placeholder="e.g. Heart of the Himalayas"
                   className={`w-full bg-surface-container-lowest border-b px-0 py-3 text-sm font-sans focus:outline-none transition-colors ${
                     errors.tagline
@@ -605,7 +656,7 @@ function RegionDrawer({
                 </label>
                 <input
                   value={form.badge}
-                  onChange={(e) => set("badge", e.target.value)}
+                  onChange={(e) => setField("badge", e.target.value)}
                   placeholder="e.g. Iconic"
                   className={`w-full bg-surface-container-lowest border-b px-0 py-3 text-sm font-sans focus:outline-none transition-colors ${
                     errors.badge
@@ -630,8 +681,8 @@ function RegionDrawer({
                 </label>
                 <textarea
                   rows={2}
-                  value={form.cardDescription}
-                  onChange={(e) => set("cardDescription", e.target.value)}
+                  value={form.card_description}
+                  onChange={(e) => setField("card_description", e.target.value)}
                   placeholder="A concise description for the destinations grid…"
                   className={`w-full bg-surface-container-lowest border-b px-0 py-3 text-sm font-sans focus:outline-none transition-colors resize-none ${
                     errors.cardDescription
@@ -640,7 +691,7 @@ function RegionDrawer({
                   }`}
                 />
                 <p className="text-[10px] text-outline font-sans mt-1">
-                  {form.cardDescription.length} chars
+                  {form.card_description.length} chars
                 </p>
                 {errors.cardDescription && (
                   <p className="text-xs text-error mt-1 font-sans">
@@ -660,7 +711,7 @@ function RegionDrawer({
                 <textarea
                   rows={4}
                   value={form.description}
-                  onChange={(e) => set("description", e.target.value)}
+                  onChange={(e) => setField("description", e.target.value)}
                   placeholder="The full description shown on the region detail page…"
                   className={`w-full bg-surface-container-lowest border-b px-0 py-3 text-sm font-sans focus:outline-none transition-colors resize-none ${
                     errors.description
@@ -696,13 +747,6 @@ function RegionDrawer({
                 </p>
                 <p>
                   <span className="font-semibold text-on-surface">
-                    Card Image
-                  </span>{" "}
-                  — shown in the bento grid on the Destinations page (same image
-                  is used by default)
-                </p>
-                <p>
-                  <span className="font-semibold text-on-surface">
                     Specialty Image
                   </span>{" "}
                   — shown in the &quot;Regional Specialties&quot; section
@@ -712,14 +756,18 @@ function RegionDrawer({
 
               <ImageUploader
                 label="Hero Image (Region Detail Page)"
-                value={form.heroImage}
-                onChange={(url) => set("heroImage", url)}
+                value={form.hero_image}
+                onChange={(url) => setField("hero_image", url)}
+                slug={form.slug}
+                type="hero"
               />
 
               <ImageUploader
                 label="Specialty / Interior Image"
-                value={form.specialtyImage}
-                onChange={(url) => set("specialtyImage", url)}
+                value={form.specialty_image}
+                onChange={(url) => setField("specialty_image", url)}
+                slug={form.slug}
+                type="specialty"
               />
 
               {/* Bento preview with current image */}
@@ -738,8 +786,8 @@ function RegionDrawer({
                   Average Elevation
                 </label>
                 <input
-                  value={form.stats.elevation}
-                  onChange={(e) => setStat("elevation", e.target.value)}
+                  value={form.elevation}
+                  onChange={(e) => setField("elevation", e.target.value)}
                   placeholder="e.g. 4,000m+"
                   className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
                 />
@@ -749,8 +797,8 @@ function RegionDrawer({
                   Difficulty Range
                 </label>
                 <input
-                  value={form.stats.difficulty}
-                  onChange={(e) => setStat("difficulty", e.target.value)}
+                  value={form.difficulty}
+                  onChange={(e) => setField("difficulty", e.target.value)}
                   placeholder="e.g. Moderate to Challenging"
                   className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
                 />
@@ -760,8 +808,8 @@ function RegionDrawer({
                   Best Season
                 </label>
                 <input
-                  value={form.stats.bestSeason}
-                  onChange={(e) => setStat("bestSeason", e.target.value)}
+                  value={form.best_season}
+                  onChange={(e) => setField("best_season", e.target.value)}
                   placeholder="e.g. Mar–May & Oct–Nov"
                   className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
                 />
@@ -777,17 +825,17 @@ function RegionDrawer({
                     {
                       icon: "terrain",
                       label: "Avg Elevation",
-                      value: form.stats.elevation || "—",
+                      value: form.elevation || "—",
                     },
                     {
                       icon: "speed",
                       label: "Difficulty",
-                      value: form.stats.difficulty || "—",
+                      value: form.difficulty || "—",
                     },
                     {
                       icon: "calendar_month",
                       label: "Best Season",
-                      value: form.stats.bestSeason || "—",
+                      value: form.best_season || "—",
                     },
                   ].map((s) => (
                     <div
@@ -809,26 +857,136 @@ function RegionDrawer({
               </div>
             </>
           )}
+
+          {/* ── SPECIALTIES TAB ── */}
+          {tab === "specialties" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
+                  Regional Specialties
+                </label>
+                <button
+                  onClick={() => {
+                    const newSpecs = [...(form.specialties || [])];
+                    newSpecs.push({
+                      region_id: form.id || "",
+                      number: String(newSpecs.length + 1).padStart(2, "0"),
+                      title: "",
+                      description: "",
+                      sort_order: newSpecs.length,
+                    });
+                    setField("specialties", newSpecs);
+                  }}
+                  className="text-primary text-[10px] font-semibold uppercase tracking-widest font-sans flex items-center gap-1 hover:underline"
+                >
+                  <span className="material-symbols-outlined text-sm">add</span>
+                  Add Specialty
+                </button>
+              </div>
+
+              {!form.specialties?.length ? (
+                <div className="text-center py-10 bg-surface-container-low rounded border border-dashed border-outline-variant">
+                  <p className="text-xs text-on-surface-variant font-sans">
+                    No specialties added yet.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {form.specialties.map((spec, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-surface-container-low rounded p-4 border border-outline-variant space-y-4 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-serif font-bold text-outline-variant">
+                          #{spec.number}
+                        </span>
+                        <button
+                          onClick={() => {
+                            const newSpecs = form.specialties?.filter(
+                              (_, i) => i !== idx,
+                            );
+                            setField("specialties", newSpecs);
+                          }}
+                          className="text-outline hover:text-error transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">
+                            delete
+                          </span>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-4">
+                        <div className="col-span-1">
+                          <label className="block text-[8px] font-semibold uppercase tracking-widest text-outline mb-1 font-sans">
+                            Num
+                          </label>
+                          <input
+                            value={spec.number}
+                            onChange={(e) => {
+                              const newSpecs = [...(form.specialties || [])];
+                              newSpecs[idx].number = e.target.value;
+                              setField("specialties", newSpecs);
+                            }}
+                            className="w-full bg-surface border-b border-outline-variant py-1 text-xs font-sans focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div className="col-span-3">
+                          <label className="block text-[8px] font-semibold uppercase tracking-widest text-outline mb-1 font-sans">
+                            Title
+                          </label>
+                          <input
+                            value={spec.title}
+                            onChange={(e) => {
+                              const newSpecs = [...(form.specialties || [])];
+                              newSpecs[idx].title = e.target.value;
+                              setField("specialties", newSpecs);
+                            }}
+                            placeholder="e.g. Rare Flora"
+                            className="w-full bg-surface border-b border-outline-variant py-1 text-xs font-sans focus:outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[8px] font-semibold uppercase tracking-widest text-outline mb-1 font-sans">
+                          Description
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={spec.description}
+                          onChange={(e) => {
+                            const newSpecs = [...(form.specialties || [])];
+                            newSpecs[idx].description = e.target.value;
+                            setField("specialties", newSpecs);
+                          }}
+                          className="w-full bg-surface border-b border-outline-variant py-1 text-xs font-sans focus:outline-none focus:border-primary resize-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
         <div className="px-8 py-5 border-t border-outline-variant flex gap-3 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 border border-outline-variant text-on-surface-variant rounded px-4 py-3 text-sm font-semibold font-sans hover:bg-surface-container transition-colors"
+            disabled={saving}
+            className="flex-1 border border-outline-variant text-on-surface-variant rounded px-4 py-3 text-sm font-semibold font-sans hover:bg-surface-container transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
-            onClick={() => {
-              if (validate()) onSave(form);
-            }}
-            className="flex-1 bg-primary text-on-primary rounded px-4 py-3 text-sm font-semibold font-sans hover:bg-primary-container transition-colors flex items-center justify-center gap-2"
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 bg-primary text-on-primary rounded px-4 py-3 text-sm font-semibold font-sans hover:bg-primary-container transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-base">
-              {isEdit ? "save" : "add_circle"}
+              {saving ? "sync" : isEdit ? "save" : "add_circle"}
             </span>
-            {isEdit ? "Save Changes" : "Add Region"}
+            {saving ? "Saving..." : isEdit ? "Save Changes" : "Add Region"}
           </button>
         </div>
       </div>
@@ -839,9 +997,8 @@ function RegionDrawer({
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function AdminRegionsPage() {
-  const [regions, setRegions] = useState<EditableRegion[]>(
-    initialRegions.map(toEditable),
-  );
+  const [regions, setRegions] = useState<EditableRegion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<{
     region: EditableRegion;
@@ -853,30 +1010,112 @@ export default function AdminRegionsPage() {
   } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
+  const loadRegions = useCallback(async () => {
+    try {
+      const data = await adminGetRegions();
+      // Map DB fields to EditableRegion
+      const mapped: EditableRegion[] = data.map((r) => ({
+        id: r.id,
+        slug: r.slug,
+        name: r.name,
+        tagline: r.tagline || "",
+        hero_label: r.hero_label || "",
+        hero_image: r.hero_image || "",
+        description: r.description || "",
+        specialty_image: r.specialty_image || "",
+        badge: r.badge || "",
+        card_description: r.card_description || "",
+        elevation: r.elevation || "",
+        difficulty: r.difficulty || "",
+        best_season: r.best_season || "",
+        sort_order: r.sort_order || 0,
+        is_published: r.is_published ?? true,
+      }));
+      setRegions(mapped);
+    } catch (err) {
+      console.error("Failed to load regions:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    Promise.resolve().then(() => loadRegions());
+  }, [loadRegions]);
+
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleSave = (data: EditableRegion) => {
-    if (editTarget !== null) {
-      setRegions((prev) =>
-        prev.map((r, i) => (i === editTarget.index ? data : r)),
-      );
-      showToast(`"${data.name}" updated successfully`);
-    } else {
-      setRegions((prev) => [...prev, data]);
-      showToast(`"${data.name}" added successfully`);
+  const handleSave = async (data: EditableRegion) => {
+    try {
+      // 1. Upsert Region
+      const savedRegion = await adminUpsertRegion({
+        id: data.id,
+        slug: data.slug,
+        name: data.name,
+        tagline: data.tagline,
+        hero_label: data.hero_label,
+        hero_image: data.hero_image,
+        description: data.description,
+        specialty_image: data.specialty_image,
+        badge: data.badge,
+        card_description: data.card_description,
+        elevation: data.elevation,
+        difficulty: data.difficulty,
+        best_season: data.best_season,
+        sort_order: data.sort_order,
+        is_published: data.is_published,
+      });
+
+      // 2. Handle Specialties (Upsert/Delete)
+      if (data.specialties) {
+        // Get current specialties from DB to identify deletions
+        const currentSpecs = data.id ? await adminGetSpecialties(data.id) : [];
+        const currentIds = currentSpecs.map((s) => s.id);
+        const newIds = data.specialties.map((s) => s.id).filter(Boolean);
+
+        const toDelete = currentIds.filter((id) => !newIds.includes(id));
+
+        await Promise.all([
+          ...data.specialties.map((spec) =>
+            adminUpsertSpecialty({
+              ...spec,
+              region_id: savedRegion.id,
+            }),
+          ),
+          ...toDelete.map((id) => adminDeleteSpecialty(id!)),
+        ]);
+      }
+
+      showToast(`"${data.name}" saved successfully`);
+      loadRegions();
+      setDrawerOpen(false);
+      setEditTarget(null);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Save failed: ${err.message}`);
+      } else {
+        alert("Save failed with an unknown error.");
+      }
     }
-    setDrawerOpen(false);
-    setEditTarget(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteTarget) return;
-    setRegions((prev) => prev.filter((_, i) => i !== deleteTarget.index));
-    showToast(`"${deleteTarget.region.name}" deleted`);
-    setDeleteTarget(null);
+    try {
+      await adminDeleteRegion(deleteTarget.region.id!);
+      showToast(`"${deleteTarget.region.name}" deleted`);
+      loadRegions();
+      setDeleteTarget(null);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Delete failed: ${err.message}`);
+      } else {
+        alert("Delete failed with an unknown error.");
+      }
+    }
   };
 
   const openEdit = (region: EditableRegion, index: number) => {
@@ -888,6 +1127,16 @@ export default function AdminRegionsPage() {
     setEditTarget(null);
     setDrawerOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <span className="material-symbols-outlined animate-spin text-primary text-4xl">
+          sync
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-10">
@@ -931,9 +1180,9 @@ export default function AdminRegionsPage() {
               style={{ height: 140 }}
               onClick={() => openEdit(regions[0], 0)}
             >
-              {regions[0].heroImage && (
+              {regions[0].hero_image && (
                 <img
-                  src={regions[0].heroImage}
+                  src={regions[0].hero_image}
                   alt={regions[0].name}
                   className="w-full h-full object-cover"
                 />
@@ -967,9 +1216,9 @@ export default function AdminRegionsPage() {
               style={{ height: 140 }}
               onClick={() => openEdit(regions[1], 1)}
             >
-              {regions[1].heroImage && (
+              {regions[1].hero_image && (
                 <img
-                  src={regions[1].heroImage}
+                  src={regions[1].hero_image}
                   alt={regions[1].name}
                   className="w-full h-full object-cover"
                 />
@@ -1005,9 +1254,9 @@ export default function AdminRegionsPage() {
               style={{ height: 140 }}
               onClick={() => openEdit(regions[2], 2)}
             >
-              {regions[2].heroImage && (
+              {regions[2].hero_image && (
                 <img
-                  src={regions[2].heroImage}
+                  src={regions[2].hero_image}
                   alt={regions[2].name}
                   className="w-full h-full object-cover"
                 />
@@ -1043,9 +1292,9 @@ export default function AdminRegionsPage() {
             >
               <div className="grid grid-cols-2 h-full">
                 <div className="overflow-hidden">
-                  {regions[3].heroImage && (
+                  {regions[3].hero_image && (
                     <img
-                      src={regions[3].heroImage}
+                      src={regions[3].hero_image}
                       alt={regions[3].name}
                       className="w-full h-full object-cover"
                     />
@@ -1059,7 +1308,7 @@ export default function AdminRegionsPage() {
                     {regions[3].name}
                   </p>
                   <p className="text-[10px] text-on-surface-variant font-sans mt-1 line-clamp-2">
-                    {regions[3].cardDescription}
+                    {regions[3].card_description}
                   </p>
                 </div>
               </div>
@@ -1085,9 +1334,9 @@ export default function AdminRegionsPage() {
               style={{ height: 140 }}
               onClick={() => openEdit(region, i + 4)}
             >
-              {region.heroImage ? (
+              {region.hero_image ? (
                 <img
-                  src={region.heroImage}
+                  src={region.hero_image}
                   alt={region.name}
                   className="w-full h-full object-cover"
                 />
@@ -1139,9 +1388,9 @@ export default function AdminRegionsPage() {
             >
               {/* Image */}
               <div className="relative h-36 bg-surface-container overflow-hidden">
-                {region.heroImage ? (
+                {region.hero_image ? (
                   <img
-                    src={region.heroImage}
+                    src={region.hero_image}
                     alt={region.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -1191,15 +1440,15 @@ export default function AdminRegionsPage() {
                   </span>
                 </div>
                 <p className="text-xs text-on-surface-variant font-sans line-clamp-2 leading-relaxed">
-                  {region.cardDescription}
+                  {region.card_description}
                 </p>
                 <div className="pt-2 border-t border-outline-variant grid grid-cols-3 gap-2">
                   {[
-                    { icon: "terrain", val: region.stats.elevation || "—" },
-                    { icon: "speed", val: region.stats.difficulty || "—" },
+                    { icon: "terrain", val: region.elevation || "—" },
+                    { icon: "speed", val: region.difficulty || "—" },
                     {
                       icon: "calendar_month",
-                      val: region.stats.bestSeason || "—",
+                      val: region.best_season || "—",
                     },
                   ].map((s) => (
                     <div

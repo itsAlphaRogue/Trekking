@@ -7,7 +7,7 @@ export default function RegionHero({ region }: { region: RegionDetail }) {
         <img
           className="w-full h-full object-cover"
           alt={region.name}
-          src={region.hero_image ?? "/fallback.png"}
+          src={region.hero_image || "/fallback.png"}
         />
         <div className="absolute inset-0 bg-linear-to-r from-primary/60 to-transparent" />
       </div>
