@@ -25,37 +25,6 @@ export default function TrekInquiryCard({
         Experience the high-altitude reliability of Himalayan Vistas.
       </p>
 
-      {/* Info rows */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3 p-4 bg-surface-container-low">
-          <span className="material-symbols-outlined text-primary-container">
-            calendar_month
-          </span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant font-sans">
-              Next Departure
-            </p>
-            <p className="text-base font-bold font-sans">
-              {trek.nextDeparture ?? "On Request"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 p-4 bg-surface-container-low">
-          <span className="material-symbols-outlined text-primary-container">
-            sell
-          </span>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant font-sans">
-              Price From
-            </p>
-            <p className="text-base font-bold font-sans">
-              ${trek.priceFrom?.toLocaleString()} USD
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* CTA buttons */}
       <div className="mt-8 flex flex-col gap-4">
         <a

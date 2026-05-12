@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { adminGetProfile } from "@/lib/supabase/queries/admin";
 import { getSettings } from "@/lib/supabase/queries/settings";
+import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -15,6 +16,9 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
   const [profile, setProfile] = useState<{
     full_name: string;
     role_label: string;
@@ -39,6 +43,11 @@ export default function AdminSidebar() {
       })
       .catch((err) => console.error("Sidebar settings fetch error:", err));
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/admin-login");
+  };
 
   return (
     <aside className="w-72 border-r border-outline-variant bg-surface flex flex-col shrink-0">
@@ -108,11 +117,22 @@ export default function AdminSidebar() {
               {profile?.role_label || "Admin"}
             </p>
           </div>
-          <Link href="/admin/settings">
-            <span className="material-symbols-outlined text-outline text-sm hover:text-primary transition-colors cursor-pointer">
-              settings
-            </span>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/admin/settings">
+              <span className="material-symbols-outlined text-outline text-sm hover:text-primary transition-colors cursor-pointer">
+                settings
+              </span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center group"
+              title="Log out"
+            >
+              <span className="material-symbols-outlined text-outline text-sm group-hover:text-error transition-colors">
+                logout
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </aside>
