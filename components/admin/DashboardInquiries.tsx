@@ -49,8 +49,8 @@ const inquiries = [
 
 export default function DashboardInquiries() {
   return (
-    <section className="col-span-2 bg-surface border border-outline-variant rounded flex flex-col">
-      <div className="px-6 py-5 border-b border-outline-variant flex items-center justify-between">
+    <section className="lg:col-span-2 bg-surface border border-outline-variant rounded flex flex-col overflow-hidden">
+      <div className="px-4 md:px-6 py-4 md:py-5 border-b border-outline-variant flex items-center justify-between">
         <h4 className="font-serif text-lg font-semibold text-primary">
           Recent Inquiries
         </h4>

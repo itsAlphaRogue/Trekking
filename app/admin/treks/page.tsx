@@ -1209,10 +1209,10 @@ export default function AdminPackagesPage() {
   return (
     <div className="space-y-6 pb-10">
       {/* ── Toolbar ── */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex gap-3 flex-wrap flex-1">
+      <div className="flex flex-col xl:flex-row gap-4 xl:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-1 min-w-0">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-outline text-sm">
               search
             </span>
@@ -1220,40 +1220,42 @@ export default function AdminPackagesPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search packages…"
-              className="bg-surface-container-lowest border border-outline-variant rounded pl-9 pr-4 py-2 text-sm font-sans focus:outline-none focus:border-primary transition-colors w-52"
+              className="bg-surface-container-lowest border border-outline-variant rounded pl-9 pr-4 py-2 text-sm font-sans focus:outline-none focus:border-primary transition-colors w-full"
             />
           </div>
 
-          {/* Region filter */}
-          <select
-            value={regionFilter}
-            onChange={(e) => setRegionFilter(e.target.value)}
-            className="border border-outline-variant rounded px-3 py-2 text-sm font-sans bg-surface focus:outline-none focus:border-primary text-on-surface"
-          >
-            <option value="all">All Regions</option>
-            {regions.map((r) => (
-              <option key={r.slug} value={r.slug}>
-                {r.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2 w-full sm:w-auto">
+            {/* Region filter */}
+            <select
+              value={regionFilter}
+              onChange={(e) => setRegionFilter(e.target.value)}
+              className="flex-1 sm:flex-none border border-outline-variant rounded px-3 py-2 text-sm font-sans bg-surface focus:outline-none focus:border-primary text-on-surface"
+            >
+              <option value="all">All Regions</option>
+              {regions.map((r) => (
+                <option key={r.slug} value={r.slug}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Difficulty filter */}
-          <select
-            value={diffFilter}
-            onChange={(e) => setDiffFilter(e.target.value)}
-            className="border border-outline-variant rounded px-3 py-2 text-sm font-sans bg-surface focus:outline-none focus:border-primary text-on-surface"
-          >
-            <option value="all">All Difficulties</option>
-            {DIFFICULTIES.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
+            {/* Difficulty filter */}
+            <select
+              value={diffFilter}
+              onChange={(e) => setDiffFilter(e.target.value)}
+              className="flex-1 sm:flex-none border border-outline-variant rounded px-3 py-2 text-sm font-sans bg-surface focus:outline-none focus:border-primary text-on-surface"
+            >
+              <option value="all">All Difficulties</option>
+              {DIFFICULTIES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center justify-between sm:justify-end gap-3 w-full xl:w-auto shrink-0 border-t xl:border-none pt-4 xl:pt-0">
           {/* View toggle */}
           <div className="flex border border-outline-variant rounded overflow-hidden">
             {(["list", "grid"] as ViewMode[]).map((v) => (
@@ -1276,7 +1278,7 @@ export default function AdminPackagesPage() {
           {/* Add button */}
           <button
             onClick={openAdd}
-            className="bg-primary text-on-primary px-5 py-2 rounded text-xs font-semibold font-sans flex items-center gap-2 hover:bg-primary-container transition-colors"
+            className="bg-primary text-on-primary px-5 py-2.5 rounded text-xs font-semibold font-sans flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm"
           >
             <span className="material-symbols-outlined text-base">add</span>
             Add Package

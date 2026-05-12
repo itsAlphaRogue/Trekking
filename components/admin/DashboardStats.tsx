@@ -69,11 +69,11 @@ export default function DashboardStats() {
   ];
 
   return (
-    <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className={`p-6 border rounded hover:shadow-lg transition-shadow relative overflow-hidden ${
+          className={`p-4 md:p-6 border rounded hover:shadow-lg transition-shadow relative overflow-hidden ${
             stat.dark
               ? "bg-primary-container text-on-primary-container border-primary"
               : "bg-surface border-outline-variant"

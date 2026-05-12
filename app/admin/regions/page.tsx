@@ -1157,9 +1157,9 @@ export default function AdminRegionsPage() {
   }
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-6 md:space-y-8 pb-10">
       {/* ── Top bar ── */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <p className="text-sm text-on-surface-variant font-sans">
             <span className="font-semibold text-on-surface">
@@ -1170,15 +1170,14 @@ export default function AdminRegionsPage() {
           </p>
           {regions.length > 4 && (
             <p className="text-xs text-on-tertiary-fixed-variant font-sans flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm">info</span>
-              Regions beyond position 4 appear as narrow cards at the bottom of
-              the bento grid.
+              <span className="material-symbols-outlined text-sm shrink-0">info</span>
+              Regions beyond position 4 appear as narrow cards.
             </p>
           )}
         </div>
         <button
           onClick={openAdd}
-          className="bg-primary text-on-primary px-5 py-2 rounded text-xs font-semibold font-sans flex items-center gap-2 hover:bg-primary-container transition-colors shrink-0"
+          className="bg-primary text-on-primary px-5 py-2.5 rounded text-xs font-semibold font-sans flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shrink-0 shadow-sm"
         >
           <span className="material-symbols-outlined text-base">add</span>
           Add Region
@@ -1186,15 +1185,15 @@ export default function AdminRegionsPage() {
       </div>
 
       {/* ── Live Bento Preview ── */}
-      <div className="bg-surface border border-outline-variant rounded p-6">
+      <div className="bg-surface border border-outline-variant rounded p-4 md:p-6">
         <p className="text-[10px] font-semibold uppercase tracking-widest text-outline mb-4 font-sans">
           Live Bento Layout — Destinations Page
         </p>
-        <div className="grid grid-cols-12 gap-3">
+        <div className="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-12 gap-3">
           {/* Row 1 */}
           {regions[0] && (
             <div
-              className="col-span-8 relative overflow-hidden bg-surface-container-high rounded group cursor-pointer"
+              className="col-span-4 sm:col-span-8 relative overflow-hidden bg-surface-container-high rounded group cursor-pointer"
               style={{ height: 140 }}
               onClick={() => openEdit(regions[0], 0)}
             >
@@ -1304,11 +1303,11 @@ export default function AdminRegionsPage() {
           )}
           {regions[3] && (
             <div
-              className="col-span-8 relative overflow-hidden bg-surface-container-high rounded group cursor-pointer"
+              className="col-span-4 sm:col-span-8 relative overflow-hidden bg-surface-container-high rounded group cursor-pointer"
               style={{ height: 140 }}
               onClick={() => openEdit(regions[3], 3)}
             >
-              <div className="grid grid-cols-2 h-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 h-full">
                 <div className="overflow-hidden">
                   {regions[3].hero_image && (
                     <img
@@ -1325,7 +1324,7 @@ export default function AdminRegionsPage() {
                   <p className="text-sm font-semibold text-primary font-serif mt-1">
                     {regions[3].name}
                   </p>
-                  <p className="text-[10px] text-on-surface-variant font-sans mt-1 line-clamp-2">
+                  <p className="text-[10px] text-on-surface-variant font-sans mt-1 line-clamp-1 sm:line-clamp-2">
                     {regions[3].card_description}
                   </p>
                 </div>
@@ -1396,7 +1395,7 @@ export default function AdminRegionsPage() {
       </div>
 
       {/* ── Region cards list ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {regions.map((region, index) => {
           const layout = getBentoLayout(index);
           return (

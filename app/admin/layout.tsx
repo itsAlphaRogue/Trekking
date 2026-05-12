@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import AdminHeader from "@/components/admin/AdminHeader";
+import AdminShell from "@/components/admin/AdminShell";
 
 export const metadata = {
   title: "Admin | Himalayan Vistas",
@@ -33,13 +32,5 @@ export default async function AdminLayout({
     redirect("/admin-login?error=not_admin");
   }
 
-  return (
-    <div className="flex h-screen overflow-hidden bg-surface">
-      <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminHeader />
-        <main className="flex-1 overflow-y-auto p-8 md:p-10">{children}</main>
-      </div>
-    </div>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }
