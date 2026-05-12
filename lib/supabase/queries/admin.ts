@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin_client";
 
 // ─── Region CRUD ──────────────────────────────────────────────────────────────
 
@@ -279,8 +280,130 @@ export async function adminGetDashboardStats() {
   ]);
 
   return {
-    publishedTreks:   treksResult.count      ?? 0,
-    publishedRegions: regionsResult.count    ?? 0,
-    draftTreks:       unpublishedResult.count ?? 0,
+    publishedTreks: treksResult.count ?? 0,
+    publishedRegions: regionsResult.count ?? 0,
+    draftTreks: unpublishedResult.count ?? 0,
+  };
+}
+
+// ─── Profile & Settings ────────────────────────────────────────────────────────
+
+export async function adminGetProfile() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile fetch error:", JSON.stringify(error, null, 2));
+  }
+
+  return {
+    full_name: data?.full_name || user.user_metadata?.full_name || "",
+    role_label: data?.role_label || user.user_metadata?.role_label || "",
+    email: user.email || data?.email || "",
+    phone: user.phone || data?.phone || "",
+    avatar_url: data?.avatar_url || user.user_metadata?.avatar_url || "",
+  };
+}
+
+export async function adminUpdateProfile(profile: {
+  full_name?: string;
+  role_label?: string;
+  email?: string;
+  phone?: string;
+  avatar_url?: string;
+}) {
+  const supabase = await createClient();
+  const adminSupabase = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // 1. Update the Auth User (the "authentication tab" row)
+  const { error: authError } = await adminSupabase.auth.admin.updateUserById(
+    user.id,
+    {
+      email: profile.email,
+      phone: profile.phone,
+      user_metadata: {
+        full_name: profile.full_name,
+        role_label: profile.role_label,
+        avatar_url: profile.avatar_url,
+      },
+      email_confirm: true,
+      phone_confirm: true,
+    }
+  );
+
+  if (authError) throw new Error(authError.message);
+
+  // 2. Update the public.profiles table (for public visibility)
+  const { data, error } = await supabase
+    .from("profiles")
+    .upsert({
+      id: user.id,
+      full_name: profile.full_name,
+      role_label: profile.role_label,
+      email: profile.email,
+      phone: profile.phone,
+      avatar_url: profile.avatar_url,
+      role: "admin", // Ensure the role is preserved for public contact queries
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function adminUpdatePassword(currentPassword: string, newPassword: string) {
+  const supabase = await createClient();
+
+  // 1. Get the current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !user.email) throw new Error("Not authenticated");
+
+  // 2. Verify current password by attempting to sign in
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+
+  if (signInError) {
+    throw new Error("Invalid current password");
+  }
+
+  // 3. Update to new password
+  const { error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+import { getSettings } from "./settings";
+
+/**
+ * Publicly accessible function to get the primary admin's contact info.
+ * This is used for WhatsApp and Email links across the site.
+ */
+export async function getAdminContact() {
+  const settings = await getSettings();
+  return {
+    email: settings.email,
+    phone: settings.phone,
   };
 }

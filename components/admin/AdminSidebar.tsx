@@ -2,20 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { adminGetProfile } from "@/lib/supabase/queries/admin";
+import { getSettings } from "@/lib/supabase/queries/settings";
 
 const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
-  //   { href: "/admin/active-treks", icon: "map", label: "Active Treks" },
-  //   { href: "/admin/bookings", icon: "event_available", label: "Bookings" },
   { href: "/admin/treks", icon: "hiking", label: "treks" },
   { href: "/admin/regions", icon: "terrain", label: "Regions" },
-  //   { href: "/admin/inquiries", icon: "chat_bubble", label: "Inquiries", badge: 12,},
-  //   { href: "/admin/finance", icon: "payments", label: "Finance" },
   { href: "/admin/settings", icon: "settings", label: "Settings" },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const [profile, setProfile] = useState<{
+    full_name: string;
+    role_label: string;
+    avatar_url: string;
+  } | null>(null);
+  const [companyName, setCompanyName] = useState("Himalayan Vistas");
+
+  useEffect(() => {
+    adminGetProfile()
+      .then((data) => {
+        setProfile({
+          full_name: data.full_name || "Admin",
+          role_label: data.role_label || "Administrator",
+          avatar_url: data.avatar_url || "",
+        });
+      })
+      .catch((err) => console.error("Sidebar profile fetch error:", err));
+
+    getSettings()
+      .then((data) => {
+        setCompanyName(data.company_name);
+      })
+      .catch((err) => console.error("Sidebar settings fetch error:", err));
+  }, []);
 
   return (
     <aside className="w-72 border-r border-outline-variant bg-surface flex flex-col shrink-0">
@@ -31,7 +54,7 @@ export default function AdminSidebar() {
         </div>
         <div>
           <h1 className="font-serif text-base font-semibold text-primary leading-tight">
-            Himalayan Vistas
+            {companyName}
           </h1>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
             Admin Console
@@ -62,11 +85,6 @@ export default function AdminSidebar() {
                 {item.icon}
               </span>
               <span>{item.label}</span>
-              {/* {item.badge && (
-                <span className="ml-auto bg-error text-on-error px-2 py-0.5 rounded-full text-[10px] font-sans">
-                  {item.badge}
-                </span>
-              )} */}
             </Link>
           );
         })}
@@ -79,15 +97,15 @@ export default function AdminSidebar() {
             <img
               alt="Admin"
               className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm7GHZ1MDiggW9vIQlcRMe4dydXnSr3lCPdClZmPlD5Je8L0XFs-SUZg1OLu9n7kDI7prdB-Rq8dc87_jTkvtV_rKODP9o-X_7H_9lPoyVbhbLUh11F1BwUMQEUC3UfqiekQuqs3fTMlNcsdDlf7ODE5-deKIwMQ1oK51bBNh37cnb66TJkyAP4XPgcDY0KsUxwG9KaieMoRlS3w0-DXa25i3NPtoWvXYNBI9J59nK3eNNqz2Nb_1d7-qIJ_Py4mdo4Zq4PaSMWd0j"
+              src={profile?.avatar_url || "/fallback.png"}
             />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-on-surface font-sans truncate">
-              Tashi Dorje
+              {profile?.full_name || "Loading..."}
             </p>
             <p className="text-[11px] text-outline font-sans">
-              Chief Operations
+              {profile?.role_label || "Admin"}
             </p>
           </div>
           <Link href="/admin/settings">

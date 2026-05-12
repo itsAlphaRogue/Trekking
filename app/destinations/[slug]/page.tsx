@@ -5,6 +5,7 @@ import {
   getTreksByRegion,
   getAllRegionSlugsStatic,
 } from "@/lib/supabase/queries/regions";
+import { getSettings } from "@/lib/supabase/queries/settings";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
 import RegionHero from "@/components/region/RegionHero";
@@ -40,21 +41,22 @@ export default async function RegionPage({ params }: Props) {
   const region = await getRegionBySlug(slug);
   if (!region) notFound();
 
-  const [specialties, treks] = await Promise.all([
+  const [specialties, treks, settings] = await Promise.all([
     getRegionSpecialties(region.id),
     getTreksByRegion(slug),
+    getSettings(),
   ]);
 
   return (
     <>
-      <TopNavBar activePage="destinations" />
+      <TopNavBar activePage="destinations" companyName={settings.company_name} />
       <main>
         <RegionHero region={region} />
         <RegionStats region={region} />
         <RegionSpecialties region={region} specialties={specialties} />
         <RegionTreks treks={treks} />
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

@@ -1,4 +1,10 @@
-export default function WhyTrekWithUs() {
+interface WhyTrekWithUsProps {
+  companyName?: string;
+}
+
+export default function WhyTrekWithUs({ 
+  companyName = "Himalayan Vistas" 
+}: WhyTrekWithUsProps) {
   return (
     <section className="bg-surface-container-low py-30">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
@@ -27,7 +33,7 @@ export default function WhyTrekWithUs() {
           {/* Text column */}
           <div className="lg:pl-20 mt-16 md:mt-0">
             <h2 className="font-serif text-[40px] leading-12 font-semibold text-primary mb-10">
-              Why Himalayan Vistas?
+              Why {companyName}?
             </h2>
 
             <div className="space-y-12">

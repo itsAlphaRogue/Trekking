@@ -4,6 +4,7 @@ import DestinationsHero from "@/components/destinations/DestinationsHero";
 import DestinationGrid from "@/components/destinations/DestinationGrid";
 import DestinationsTrust from "@/components/destinations/DestinationsTrust";
 import { getRegions } from "@/lib/supabase/queries/regions";
+import { getSettings } from "@/lib/supabase/queries/settings";
 
 export const metadata = {
   title: "Destinations | Himalayan Vistas",
@@ -12,17 +13,20 @@ export const metadata = {
 };
 
 export default async function DestinationsPage() {
-  const regions = await getRegions();
+  const [regions, settings] = await Promise.all([
+    getRegions(),
+    getSettings(),
+  ]);
 
   return (
     <>
-      <TopNavBar activePage="destinations" />
+      <TopNavBar activePage="destinations" companyName={settings.company_name} />
       <main>
         <DestinationsHero />
         <DestinationGrid regions={regions} />
         <DestinationsTrust />
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

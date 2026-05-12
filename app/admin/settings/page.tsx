@@ -1,17 +1,185 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  adminGetProfile,
+  adminUpdateProfile,
+  adminUpdatePassword,
+} from "@/lib/supabase/queries/admin";
+import {
+  getSettings,
+  updateSettings,
+  type Settings,
+} from "@/lib/supabase/queries/settings";
+import { uploadImage } from "@/lib/supabase/storage";
 
-type Tab = "profile" | "company" | "notifications" | "security";
+type Tab = "profile" | "website" | "security";
 
 export default function AdminSettingsPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("profile");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Profile state
+  const [profile, setProfile] = useState<{
+    full_name: string;
+    role_label: string;
+    avatar_url: string;
+  }>({
+    full_name: "",
+    role_label: "",
+    avatar_url: "",
+  });
+
+  // Website Settings state
+  const [settings, setSettings] = useState<Settings>({
+    id: 1,
+    company_name: "",
+    email: "",
+    phone: "",
+    facebook_url: "",
+    instagram_url: "",
+    youtube_url: "",
+    tiktok_url: "",
+    default_currency: "USD",
+  });
+
+  // Password state
+  const [passwords, setPasswords] = useState({
+    current: "",
+    new: "",
+    confirm: "",
+  });
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [profileData, settingsData] = await Promise.all([
+          adminGetProfile(),
+          getSettings(),
+        ]);
+
+        setProfile({
+          full_name: profileData.full_name || "",
+          role_label: profileData.role_label || "",
+          avatar_url: profileData.avatar_url || "",
+        });
+
+        setSettings(settingsData);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    try {
+      await adminUpdateProfile(profile);
+      setMessage({ type: "success", text: "Profile updated successfully." });
+      router.refresh();
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to update profile",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSettingsUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    try {
+      await updateSettings(settings);
+      setMessage({
+        type: "success",
+        text: "Website settings updated successfully.",
+      });
+      router.refresh();
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to update settings",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwords.new !== passwords.confirm) {
+      setMessage({ type: "error", text: "New passwords do not match." });
+      return;
+    }
+    setSaving(true);
+    setMessage(null);
+    try {
+      await adminUpdatePassword(passwords.current, passwords.new);
+      setPasswords({ current: "", new: "", confirm: "" });
+      setMessage({ type: "success", text: "Password updated successfully." });
+      router.refresh();
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to update password",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaving(true);
+    setMessage(null);
+    try {
+      const url = await uploadImage(
+        file,
+        "trek-images",
+        `profiles/${Date.now()}-${file.name}`,
+      );
+      setProfile((prev) => ({ ...prev, avatar_url: url }));
+      await adminUpdateProfile({ ...profile, avatar_url: url });
+      setMessage({ type: "success", text: "Avatar updated successfully." });
+      router.refresh();
+    } catch (err) {
+      setMessage({ type: "error", text: "Failed to upload avatar." });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: "profile",       label: "Profile",       icon: "person" },
-    { key: "company",       label: "Company Info",  icon: "business" },
-    { key: "notifications", label: "Notifications", icon: "notifications" },
-    { key: "security",      label: "Security",      icon: "lock" },
+    { key: "profile", label: "Profile", icon: "person" },
+    { key: "website", label: "Website", icon: "language" },
+    { key: "security", label: "Security", icon: "lock" },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <span className="material-symbols-outlined animate-spin text-primary text-3xl">
+          progress_activity
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl space-y-6 pb-10">
@@ -20,117 +188,257 @@ export default function AdminSettingsPage() {
         {tabs.map((t) => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key)}
+            onClick={() => {
+              setTab(t.key);
+              setMessage(null);
+            }}
             className={`flex items-center gap-2 px-4 py-2 rounded text-xs font-semibold font-sans transition-colors ${
               tab === t.key
                 ? "bg-surface text-primary shadow-sm"
                 : "text-on-surface-variant hover:text-primary"
             }`}
           >
-            <span className="material-symbols-outlined text-base">{t.icon}</span>
+            <span className="material-symbols-outlined text-base">
+              {t.icon}
+            </span>
             {t.label}
           </button>
         ))}
       </div>
 
+      {message && (
+        <div
+          className={`px-4 py-3 rounded text-sm font-sans flex items-center gap-3 ${
+            message.type === "success"
+              ? "bg-primary-container text-on-primary-container"
+              : "bg-error-container text-on-error-container"
+          }`}
+        >
+          <span className="material-symbols-outlined text-base">
+            {message.type === "success" ? "check_circle" : "error"}
+          </span>
+          {message.text}
+        </div>
+      )}
+
       {tab === "profile" && (
         <div className="bg-surface border border-outline-variant rounded overflow-hidden">
           <div className="px-8 py-5 border-b border-outline-variant">
-            <h3 className="font-serif text-lg font-semibold text-primary">Profile Settings</h3>
-            <p className="text-xs text-on-surface-variant font-sans mt-1">Update your personal information and avatar.</p>
+            <h3 className="font-serif text-lg font-semibold text-primary">
+              Profile Settings
+            </h3>
+            <p className="text-xs text-on-surface-variant font-sans mt-1">
+              Update your personal information and contact details.
+            </p>
           </div>
-          <div className="p-8 space-y-6">
+          <form onSubmit={handleProfileUpdate} className="p-8 space-y-6">
             {/* Avatar */}
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-full bg-surface-container-highest overflow-hidden">
-                <img alt="Admin" className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm7GHZ1MDiggW9vIQlcRMe4dydXnSr3lCPdClZmPlD5Je8L0XFs-SUZg1OLu9n7kDI7prdB-Rq8dc87_jTkvtV_rKODP9o-X_7H_9lPoyVbhbLUh11F1BwUMQEUC3UfqiekQuqs3fTMlNcsdDlf7ODE5-deKIwMQ1oK51bBNh37cnb66TJkyAP4XPgcDY0KsUxwG9KaieMoRlS3w0-DXa25i3NPtoWvXYNBI9J59nK3eNNqz2Nb_1d7-qIJ_Py4mdo4Zq4PaSMWd0j"
+                <img
+                  alt="Admin"
+                  className="w-full h-full object-cover"
+                  src={profile.avatar_url || "/fallback.png"}
                 />
               </div>
               <div>
-                <button className="text-xs font-semibold text-primary border border-primary rounded px-4 py-2 font-sans hover:bg-primary hover:text-on-primary transition-colors">
+                <label className="cursor-pointer text-xs font-semibold text-primary border border-primary rounded px-4 py-2 font-sans hover:bg-primary hover:text-on-primary transition-colors inline-block">
                   Change Photo
-                </button>
-                <p className="text-[11px] text-outline font-sans mt-2">JPG, PNG up to 2MB</p>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    disabled={saving}
+                  />
+                </label>
+                <p className="text-[11px] text-outline font-sans mt-2">
+                  JPG, PNG up to 2MB
+                </p>
               </div>
             </div>
             {/* Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { label: "Full Name", value: "Tashi Dorje" },
-                { label: "Role", value: "Chief Operations" },
-                { label: "Email", value: "tashi@himalayanvistas.com" },
-                { label: "Phone", value: "+977 98-0000-0000" },
-              ].map((f) => (
-                <div key={f.label}>
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">{f.label}</label>
-                  <input defaultValue={f.value} className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors" />
-                </div>
-              ))}
-            </div>
-            <button className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors">Save Changes</button>
-          </div>
-        </div>
-      )}
-
-      {tab === "company" && (
-        <div className="bg-surface border border-outline-variant rounded overflow-hidden">
-          <div className="px-8 py-5 border-b border-outline-variant">
-            <h3 className="font-serif text-lg font-semibold text-primary">Company Information</h3>
-            <p className="text-xs text-on-surface-variant font-sans mt-1">Displayed on invoices, website, and communications.</p>
-          </div>
-          <div className="p-8 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { label: "Company Name", value: "Himalayan Vistas Pvt. Ltd." },
-                { label: "Registration No.", value: "NP-2018-TK-04821" },
-                { label: "Contact Email", value: "contact@himalayanvistas.com" },
-                { label: "Phone", value: "+977 1 442 3890" },
-                { label: "WhatsApp Number", value: "+977 98-0000-0000" },
-                { label: "Website", value: "https://himalayanvistas.com" },
-              ].map((f) => (
-                <div key={f.label}>
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">{f.label}</label>
-                  <input defaultValue={f.value} className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors" />
-                </div>
-              ))}
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">Office Address</label>
-              <textarea defaultValue="Street 42, Thamel Ward 26, Kathmandu 44600, Nepal" rows={2}
-                className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors resize-none" />
-            </div>
-            <button className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors">Save Changes</button>
-          </div>
-        </div>
-      )}
-
-      {tab === "notifications" && (
-        <div className="bg-surface border border-outline-variant rounded overflow-hidden">
-          <div className="px-8 py-5 border-b border-outline-variant">
-            <h3 className="font-serif text-lg font-semibold text-primary">Notification Preferences</h3>
-            <p className="text-xs text-on-surface-variant font-sans mt-1">Choose what alerts you receive and how.</p>
-          </div>
-          <div className="p-8 divide-y divide-outline-variant">
-            {[
-              { label: "New Inquiry Received",    desc: "Alert when a new inquiry comes through WhatsApp or email form.", on: true },
-              { label: "Booking Confirmed",       desc: "Notify when a client completes a booking.", on: true },
-              { label: "Trek Day Milestone",      desc: "Daily check-in updates from guides on active treks.", on: true },
-              { label: "Payment Received",        desc: "Alert on successful payment transaction.", on: true },
-              { label: "Booking Cancellation",    desc: "Notify when a confirmed booking is cancelled.", on: false },
-              { label: "Weekly Revenue Summary",  desc: "Weekly digest of bookings and revenue performance.", on: false },
-            ].map((n) => (
-              <div key={n.label} className="flex items-start justify-between py-5 gap-8">
-                <div>
-                  <p className="text-sm font-semibold text-on-surface font-sans">{n.label}</p>
-                  <p className="text-xs text-on-surface-variant font-sans mt-0.5">{n.desc}</p>
-                </div>
-                <button className={`w-11 h-6 rounded-full transition-colors shrink-0 relative ${n.on ? "bg-primary" : "bg-surface-container-highest"}`}>
-                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${n.on ? "left-6" : "left-1"}`} />
-                </button>
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                  Full Name
+                </label>
+                <input
+                  value={profile.full_name}
+                  onChange={(e) =>
+                    setProfile({ ...profile, full_name: e.target.value })
+                  }
+                  className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                />
               </div>
-            ))}
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                  Role Label
+                </label>
+                <input
+                  value={profile.role_label}
+                  onChange={(e) =>
+                    setProfile({ ...profile, role_label: e.target.value })
+                  }
+                  className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {tab === "website" && (
+        <div className="bg-surface border border-outline-variant rounded overflow-hidden">
+          <div className="px-8 py-5 border-b border-outline-variant">
+            <h3 className="font-serif text-lg font-semibold text-primary">
+              Website Settings
+            </h3>
+            <p className="text-xs text-on-surface-variant font-sans mt-1">
+              Global information used across the website.
+            </p>
           </div>
+          <form onSubmit={handleSettingsUpdate} className="p-8 space-y-8">
+            {/* Basic Info */}
+            <div className="space-y-6">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-primary border-b border-outline-variant pb-2">
+                Basic Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Company Name
+                  </label>
+                  <input
+                    value={settings.company_name}
+                    onChange={(e) =>
+                      setSettings({ ...settings, company_name: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Default Currency
+                  </label>
+                  <input
+                    value={settings.default_currency}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        default_currency: e.target.value,
+                      })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Public Email
+                  </label>
+                  <input
+                    type="email"
+                    value={settings.email}
+                    onChange={(e) =>
+                      setSettings({ ...settings, email: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Public Phone
+                  </label>
+                  <input
+                    value={settings.phone}
+                    onChange={(e) =>
+                      setSettings({ ...settings, phone: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-6">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-primary border-b border-outline-variant pb-2">
+                Social Media Links
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Facebook URL
+                  </label>
+                  <input
+                    value={settings.facebook_url ?? ""}
+                    onChange={(e) =>
+                      setSettings({ ...settings, facebook_url: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                    placeholder="https://facebook.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    Instagram URL
+                  </label>
+                  <input
+                    value={settings.instagram_url ?? ""}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        instagram_url: e.target.value,
+                      })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                    placeholder="https://instagram.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    YouTube URL
+                  </label>
+                  <input
+                    value={settings.youtube_url ?? ""}
+                    onChange={(e) =>
+                      setSettings({ ...settings, youtube_url: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                    placeholder="https://youtube.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                    TikTok URL
+                  </label>
+                  <input
+                    value={settings.tiktok_url ?? ""}
+                    onChange={(e) =>
+                      setSettings({ ...settings, tiktok_url: e.target.value })
+                    }
+                    className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                    placeholder="https://tiktok.com/@..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors disabled:opacity-50"
+            >
+              {saving ? "Saving..." : "Save Website Settings"}
+            </button>
+          </form>
         </div>
       )}
 
@@ -138,31 +446,64 @@ export default function AdminSettingsPage() {
         <div className="space-y-6">
           <div className="bg-surface border border-outline-variant rounded overflow-hidden">
             <div className="px-8 py-5 border-b border-outline-variant">
-              <h3 className="font-serif text-lg font-semibold text-primary">Change Password</h3>
+              <h3 className="font-serif text-lg font-semibold text-primary">
+                Change Password
+              </h3>
             </div>
-            <div className="p-8 space-y-6">
-              {["Current Password", "New Password", "Confirm New Password"].map((f) => (
-                <div key={f}>
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">{f}</label>
-                  <input type="password" className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors" placeholder="••••••••" />
-                </div>
-              ))}
-              <button className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors">Update Password</button>
-            </div>
-          </div>
-          <div className="bg-surface border border-outline-variant rounded p-8 flex items-start justify-between gap-8">
-            <div>
-              <h4 className="text-sm font-semibold text-on-surface font-sans">Two-Factor Authentication</h4>
-              <p className="text-xs text-on-surface-variant font-sans mt-1 max-w-sm">Add an extra layer of security to your account using an authenticator app.</p>
-            </div>
-            <button className="bg-secondary-container text-on-secondary-fixed-variant px-4 py-2 rounded text-xs font-semibold font-sans hover:opacity-90 transition-opacity shrink-0">Enable 2FA</button>
-          </div>
-          <div className="bg-error-container border border-error/30 rounded p-8 flex items-start justify-between gap-8">
-            <div>
-              <h4 className="text-sm font-semibold text-error font-sans">Danger Zone</h4>
-              <p className="text-xs text-on-surface-variant font-sans mt-1 max-w-sm">Permanently delete this admin account. This action cannot be undone.</p>
-            </div>
-            <button className="border border-error text-error px-4 py-2 rounded text-xs font-semibold font-sans hover:bg-error hover:text-on-error transition-colors shrink-0">Delete Account</button>
+            <form onSubmit={handlePasswordUpdate} className="p-8 space-y-6">
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={passwords.current}
+                  onChange={(e) =>
+                    setPasswords({ ...passwords, current: e.target.value })
+                  }
+                  className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={passwords.new}
+                  onChange={(e) =>
+                    setPasswords({ ...passwords, new: e.target.value })
+                  }
+                  className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline mb-2 font-sans">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={passwords.confirm}
+                  onChange={(e) =>
+                    setPasswords({ ...passwords, confirm: e.target.value })
+                  }
+                  className="w-full bg-surface-container-lowest border-b border-secondary px-0 py-3 text-sm font-sans focus:outline-none focus:border-primary transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={saving}
+                className="bg-primary text-on-primary px-6 py-2.5 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors disabled:opacity-50"
+              >
+                {saving ? "Updating..." : "Update Password"}
+              </button>
+            </form>
           </div>
         </div>
       )}

@@ -1,12 +1,20 @@
 import { TrekDetail } from "@/lib/supabase/queries/treks";
 
-export default function TrekInquiryCard({ trek }: { trek: TrekDetail }) {
+export default function TrekInquiryCard({
+  trek,
+  contact,
+}: {
+  trek: TrekDetail;
+  contact: { email: string; phone: string };
+}) {
   const whatsappMsg = encodeURIComponent(
     `Hi, I'm interested in the ${trek.title}. Can you provide more details?`,
   );
-  const whatsappUrl = `https://wa.me/9779800000000?text=${whatsappMsg}`;
+  // Clean phone number: remove non-numeric except leading +
+  const cleanPhone = contact.phone.replace(/[^\d+]/g, "");
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappMsg}`;
   const emailSubject = encodeURIComponent(`Inquiry: ${trek.title}`);
-  const emailUrl = `mailto:info@himalayanvistas.com?subject=${emailSubject}`;
+  const emailUrl = `mailto:${contact.email}?subject=${emailSubject}`;
 
   return (
     <div className="sticky top-32 bg-surface-container-lowest p-8 border border-outline-variant shadow-sm">

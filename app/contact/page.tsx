@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ContactHero from "@/components/contact/ContactHero";
 import ContactForm from "@/components/contact/ContactForm";
 import ContactSidebar from "@/components/contact/ContactSidebar";
+import { getSettings } from "@/lib/supabase/queries/settings";
 
 export const metadata = {
   title: "Contact | Himalayan Vistas",
@@ -10,10 +11,13 @@ export const metadata = {
     "Get in touch with our expedition experts to plan your perfect Himalayan trek.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getSettings();
+  const contact = { email: settings.email, phone: settings.phone };
+
   return (
     <>
-      <TopNavBar activePage="contact" />
+      <TopNavBar activePage="contact" companyName={settings.company_name} />
       <main className="relative">
         <ContactHero />
 
@@ -33,11 +37,11 @@ export default function ContactPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
             <ContactForm />
-            <ContactSidebar />
+            <ContactSidebar contact={contact} />
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

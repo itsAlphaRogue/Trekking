@@ -7,6 +7,7 @@ type ActivePage = "home" | "destinations" | "treks" | "contact";
 
 interface TopNavBarProps {
   activePage?: ActivePage;
+  companyName?: string;
 }
 
 const navLinks: { label: string; href: string; key: ActivePage }[] = [
@@ -16,7 +17,10 @@ const navLinks: { label: string; href: string; key: ActivePage }[] = [
   { label: "Contact", href: "/contact", key: "contact" },
 ];
 
-export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
+export default function TopNavBar({ 
+  activePage = "home", 
+  companyName = "Himalayan Vistas" 
+}: TopNavBarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -27,7 +31,7 @@ export default function TopNavBar({ activePage = "home" }: TopNavBarProps) {
           href="/"
           className="text-xl md:text-2xl font-bold font-serif text-primary-container tracking-tight"
         >
-          Himalayan Vistas
+          {companyName}
         </Link>
 
         {/* Desktop Nav */}

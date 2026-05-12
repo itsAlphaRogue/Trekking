@@ -6,6 +6,7 @@ import TripsSortBar from "@/components/treks/TreksSortBar";
 import TrekCard from "@/components/treks/TrekCard";
 import TripsPagination from "@/components/treks/TreksPagination";
 import { queryTreks, Difficulty } from "@/lib/supabase/queries/treks";
+import { getSettings } from "@/lib/supabase/queries/settings";
 
 export const metadata = {
   title: "All Treks | Himalayan Vistas",
@@ -21,7 +22,10 @@ interface Props {
 }
 
 export default async function TripsPage({ searchParams }: Props) {
-  const sp = await searchParams;
+  const [sp, settings] = await Promise.all([
+    searchParams,
+    getSettings(),
+  ]);
 
   const filters = {
     q: (sp.q as string) ?? undefined,
@@ -48,7 +52,7 @@ export default async function TripsPage({ searchParams }: Props) {
 
   return (
     <>
-      <TopNavBar activePage="treks" />
+      <TopNavBar activePage="treks" companyName={settings.company_name} />
       <main className="flex flex-col min-h-screen bg-surface">
         <div className="max-w-7xl w-full mx-auto px-6 md:px-8 py-12 grow">
           <div className="flex flex-col md:flex-row gap-12">
@@ -91,7 +95,7 @@ export default async function TripsPage({ searchParams }: Props) {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

@@ -5,6 +5,7 @@ import {
   getTrekGallery,
   getAllTrekSlugsStatic,
 } from "@/lib/supabase/queries/treks";
+import { getSettings } from "@/lib/supabase/queries/settings";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
 import TrekHero from "@/components/trek/TrekHero";
@@ -41,15 +42,18 @@ export default async function TrekDetailPage({ params }: Props) {
   const trek = await getTrekBySlug(slug);
   if (!trek) notFound();
 
-  // Fetch children in parallel now that we have the trek id
-  const [itinerary, gallery] = await Promise.all([
+  // Fetch data in parallel
+  const [itinerary, gallery, settings] = await Promise.all([
     getTrekItinerary(trek.id),
     getTrekGallery(trek.id),
+    getSettings(),
   ]);
+
+  const contact = { email: settings.email, phone: settings.phone };
 
   return (
     <>
-      <TopNavBar activePage="treks" />
+      <TopNavBar activePage="treks" companyName={settings.company_name} />
       <main>
         <TrekHero trek={trek} />
         <TrekQuickFacts trek={trek} />
@@ -61,14 +65,14 @@ export default async function TrekDetailPage({ params }: Props) {
               <TrekGallery images={gallery} />
             </div>
             <div className="lg:col-span-4">
-              <TrekInquiryCard trek={trek} />
+              <TrekInquiryCard trek={trek} contact={contact} />
             </div>
           </div>
         </section>
 
         <TrekWeather trek={trek} />
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

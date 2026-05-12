@@ -1,8 +1,14 @@
-export default function ContactSidebar() {
+export default function ContactSidebar({
+  contact,
+}: {
+  contact: { email: string; phone: string };
+}) {
   const whatsappMsg = encodeURIComponent(
     "Hi, I'd like to inquire about trekking packages with Himalayan Vistas.",
   );
-  const whatsappUrl = `https://wa.me/9779800000000?text=${whatsappMsg}`;
+  // Clean phone number: remove non-numeric except leading +
+  const cleanPhone = contact.phone.replace(/[^\d+]/g, "");
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappMsg}`;
 
   return (
     <div className="lg:col-span-5 flex flex-col gap-8">
@@ -30,13 +36,13 @@ export default function ContactSidebar() {
               Start a WhatsApp Chat
             </h3>
             <p className="text-base text-on-surface-variant font-sans">
-              +977 98-0000-0000
+              {contact.phone}
             </p>
           </div>
         </a>
 
         <a
-          href="mailto:contact@himalayanvistas.com"
+          href={`mailto:${contact.email}`}
           className="group flex items-center p-6 bg-surface-container border border-outline-variant hover:border-secondary transition-all"
         >
           <div className="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mr-6 group-hover:scale-110 transition-transform shrink-0">
@@ -55,7 +61,7 @@ export default function ContactSidebar() {
               Send an Email
             </h3>
             <p className="text-base text-on-surface-variant font-sans">
-              contact@himalayanvistas.com
+              {contact.email}
             </p>
           </div>
         </a>
