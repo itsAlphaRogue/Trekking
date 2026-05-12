@@ -118,7 +118,7 @@ export default function AdminSidebar() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/admin/settings">
+            <Link href="/admin/settings" className="flex items-center">
               <span className="material-symbols-outlined text-outline text-sm hover:text-primary transition-colors cursor-pointer">
                 settings
               </span>

@@ -21,7 +21,7 @@ export default async function FeaturedTreks() {
           </p>
         </div>
         <Link
-          href="/trips"
+          href="/treks"
           className="text-xs font-semibold uppercase tracking-widest border-b border-primary text-primary pb-1 hover:opacity-70 transition-opacity whitespace-nowrap font-sans"
         >
           View All Treks
@@ -56,7 +56,7 @@ export default async function FeaturedTreks() {
               <p className="text-white/80 text-base mb-6 max-w-md font-sans line-clamp-2">
                 {t0.description}
               </p>
-              <Link 
+              <Link
                 href={`/treks/${t0.slug}`}
                 className="inline-block bg-white text-primary px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-primary hover:text-white transition-all font-sans"
               >
@@ -89,7 +89,7 @@ export default async function FeaturedTreks() {
               <p className="text-white/80 text-base mb-6 font-sans line-clamp-2">
                 {t1.description}
               </p>
-              <Link 
+              <Link
                 href={`/treks/${t1.slug}`}
                 className="inline-block border border-white text-white px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-primary transition-all font-sans"
               >
@@ -119,9 +119,10 @@ export default async function FeaturedTreks() {
               <h3 className="text-white font-serif text-[32px] leading-10 font-semibold mb-2">
                 {t2.title}
               </h3>
-              <Link 
+              <Link
                 href={`/treks/${t2.slug}`}
-                className="text-white text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:translate-x-2 transition-transform font-sans"
+                // className="text-white text-xs font-semibold uppercase tracking-widest flex items-center gap-2 hover:translate-x-2 transition-transform font-sans"
+                className="border w-fit flex items-center border-white text-white px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-white hover:text-primary transition-all font-sans"
               >
                 View Trek{" "}
                 <svg
@@ -154,7 +155,7 @@ export default async function FeaturedTreks() {
               <p className="text-white/80 text-base max-w-lg mb-4 font-sans line-clamp-2">
                 {t3.description}
               </p>
-              <Link 
+              <Link
                 href={`/treks/${t3.slug}`}
                 className="inline-block bg-white text-primary px-8 py-3 text-xs font-semibold uppercase tracking-widest hover:bg-primary hover:text-white transition-all font-sans"
               >
