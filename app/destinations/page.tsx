@@ -20,7 +20,11 @@ export default async function DestinationsPage() {
 
   return (
     <>
-      <TopNavBar activePage="destinations" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="destinations" 
+        companyName={settings.company_name} 
+        contact={{ email: settings.email, phone: settings.phone }}
+      />
       <main>
         <DestinationsHero />
         <DestinationGrid regions={regions} />

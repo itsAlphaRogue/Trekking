@@ -359,6 +359,7 @@ function PackageDrawer({
     "basic" | "images" | "details" | "itinerary" | "gallery"
   >("basic");
   const [saving, setSaving] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   // Fetch itinerary/gallery if editing
   useEffect(() => {
@@ -379,6 +380,7 @@ function PackageDrawer({
   ) => {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: undefined }));
+    setSubmissionError(null);
   };
 
   const autoSlug = (title: string) =>
@@ -398,15 +400,32 @@ function PackageDrawer({
     return Object.keys(e).length === 0;
   };
 
+  const getFriendlyErrorMessage = (msg: string) => {
+    if (msg.includes("duplicate key value violates unique constraint")) {
+      if (msg.includes("slug")) return "A package with this slug already exists.";
+      if (msg.includes("title"))
+        return "A package with this title already exists.";
+      return "A package with these details already exists.";
+    }
+    return msg;
+  };
+
   const handleSave = async () => {
     if (!validate()) return;
     setSaving(true);
+    setSubmissionError(null);
     try {
       // Sync regionLabel
       const regionLabel =
         regions.find((r) => r.slug === form.region_slug)?.name ??
         form.region_label;
       await onSave({ ...form, region_label: regionLabel });
+    } catch (err) {
+      if (err instanceof Error) {
+        setSubmissionError(getFriendlyErrorMessage(err.message));
+      } else {
+        setSubmissionError("Save failed with an unknown error.");
+      }
     } finally {
       setSaving(false);
     }
@@ -465,6 +484,14 @@ function PackageDrawer({
             </button>
           ))}
         </div>
+
+        {/* Error Message */}
+        {submissionError && (
+          <div className="mx-8 mt-4 p-3 bg-error-container text-on-error-container text-xs font-sans rounded border border-error/20 flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+            <span className="material-symbols-outlined text-base">error</span>
+            {submissionError}
+          </div>
+        )}
 
         {/* Form body — scrollable */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
@@ -1072,84 +1099,76 @@ export default function AdminPackagesPage() {
   });
 
   const handleSave = async (data: EditableTrek) => {
-    try {
-      // 1. Upsert Trek
-      const savedTrek = await adminUpsertTrek({
-        id: data.id,
-        slug: data.slug,
-        title: data.title,
-        description: data.description,
-        tagline: data.tagline,
-        region_slug: data.region_slug,
-        region_label: data.region_label,
-        duration: data.duration,
-        difficulty: data.difficulty,
-        price_from: data.price_from,
-        image: data.image,
-        hero_image: data.hero_image,
-        max_altitude: data.max_altitude,
-        group_size: data.group_size,
-        next_departure: data.next_departure,
-        guide_name: data.guide_name,
-        guide_title: data.guide_title,
-        guide_image: data.guide_image,
-        guide_quote: data.guide_quote,
-        avg_temp: data.avg_temp,
-        wind_speed: data.wind_speed,
-        is_published: data.is_published,
-        is_featured: data.is_featured,
-        sort_order: data.sort_order,
-      });
+    // 1. Upsert Trek
+    const savedTrek = await adminUpsertTrek({
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      description: data.description,
+      tagline: data.tagline,
+      region_slug: data.region_slug,
+      region_label: data.region_label,
+      duration: data.duration,
+      difficulty: data.difficulty,
+      price_from: data.price_from,
+      image: data.image,
+      hero_image: data.hero_image,
+      max_altitude: data.max_altitude,
+      group_size: data.group_size,
+      next_departure: data.next_departure,
+      guide_name: data.guide_name,
+      guide_title: data.guide_title,
+      guide_image: data.guide_image,
+      guide_quote: data.guide_quote,
+      avg_temp: data.avg_temp,
+      wind_speed: data.wind_speed,
+      is_published: data.is_published,
+      is_featured: data.is_featured,
+      sort_order: data.sort_order,
+    });
 
-      // 2. Handle Itinerary
-      if (data.itinerary) {
-        const current = data.id ? await adminGetItinerary(data.id) : [];
-        const currentIds = current.map((i) => i.id);
-        const newIds = data.itinerary.map((i) => i.id).filter(Boolean);
-        const toDelete = currentIds.filter((id) => !newIds.includes(id));
+    // 2. Handle Itinerary
+    if (data.itinerary) {
+      const current = data.id ? await adminGetItinerary(data.id) : [];
+      const currentIds = current.map((i) => i.id);
+      const newIds = data.itinerary.map((i) => i.id).filter(Boolean);
+      const toDelete = currentIds.filter((id) => !newIds.includes(id));
 
-        await Promise.all([
-          ...data.itinerary.map((day, idx) =>
-            adminUpsertItineraryDay({
-              ...day,
-              trek_id: savedTrek.id,
-              sort_order: idx,
-            }),
-          ),
-          ...toDelete.map((id) => adminDeleteItineraryDay(id!)),
-        ]);
-      }
-
-      // 3. Handle Gallery
-      if (data.gallery) {
-        const current = data.id ? await adminGetGallery(data.id) : [];
-        const currentIds = current.map((i) => i.id);
-        const newIds = data.gallery.map((i) => i.id).filter(Boolean);
-        const toDelete = currentIds.filter((id) => !newIds.includes(id));
-
-        await Promise.all([
-          ...data.gallery.map((img, idx) =>
-            adminUpsertGalleryImage({
-              ...img,
-              trek_id: savedTrek.id,
-              sort_order: idx,
-            }),
-          ),
-          ...toDelete.map((id) => adminDeleteGalleryImage(id!)),
-        ]);
-      }
-
-      showToast(`"${data.title}" saved successfully`);
-      loadData();
-      setDrawerOpen(false);
-      setEditTarget(null);
-    } catch (err) {
-      if (err instanceof Error) {
-        alert(`Save failed: ${err.message}`);
-      } else {
-        alert("Save failed with an unknown error.");
-      }
+      await Promise.all([
+        ...data.itinerary.map((day, idx) =>
+          adminUpsertItineraryDay({
+            ...day,
+            trek_id: savedTrek.id,
+            sort_order: idx,
+          }),
+        ),
+        ...toDelete.map((id) => adminDeleteItineraryDay(id!)),
+      ]);
     }
+
+    // 3. Handle Gallery
+    if (data.gallery) {
+      const current = data.id ? await adminGetGallery(data.id) : [];
+      const currentIds = current.map((i) => i.id);
+      const newIds = data.gallery.map((i) => i.id).filter(Boolean);
+      const toDelete = currentIds.filter((id) => !newIds.includes(id));
+
+      await Promise.all([
+        ...data.gallery.map((img, idx) =>
+          adminUpsertGalleryImage({
+            ...img,
+            trek_id: savedTrek.id,
+            sort_order: idx,
+          }),
+        ),
+        ...toDelete.map((id) => adminDeleteGalleryImage(id!)),
+      ]);
+    }
+
+    showToast(`"${data.title}" saved successfully`);
+    loadData();
+    setDrawerOpen(false);
+    setEditTarget(null);
   };
 
   const handleDelete = async (trip: EditableTrek) => {

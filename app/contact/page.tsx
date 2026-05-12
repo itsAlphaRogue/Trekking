@@ -17,7 +17,11 @@ export default async function ContactPage() {
 
   return (
     <>
-      <TopNavBar activePage="contact" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="contact" 
+        companyName={settings.company_name} 
+        contact={contact}
+      />
       <main className="relative">
         <ContactHero />
 

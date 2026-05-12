@@ -436,6 +436,7 @@ function RegionDrawer({
     "basic",
   );
   const [saving, setSaving] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   // Fetch specialties if editing
   useEffect(() => {
@@ -452,6 +453,7 @@ function RegionDrawer({
   ) => {
     setForm((f) => ({ ...f, [key]: val }));
     setErrors((e) => ({ ...e, [key]: undefined }));
+    setSubmissionError(null);
   };
 
   const autoSlug = (name: string) =>
@@ -474,11 +476,27 @@ function RegionDrawer({
     return Object.keys(e).length === 0;
   };
 
+  const getFriendlyErrorMessage = (msg: string) => {
+    if (msg.includes("duplicate key value violates unique constraint")) {
+      if (msg.includes("slug")) return "A region with this slug already exists.";
+      if (msg.includes("name")) return "A region with this name already exists.";
+      return "A region with these details already exists.";
+    }
+    return msg;
+  };
+
   const handleSave = async () => {
     if (!validate()) return;
     setSaving(true);
+    setSubmissionError(null);
     try {
       await onSave(form);
+    } catch (err) {
+      if (err instanceof Error) {
+        setSubmissionError(getFriendlyErrorMessage(err.message));
+      } else {
+        setSubmissionError("Save failed with an unknown error.");
+      }
     } finally {
       setSaving(false);
     }
@@ -543,6 +561,14 @@ function RegionDrawer({
             </button>
           ))}
         </div>
+
+        {/* Error Message */}
+        {submissionError && (
+          <div className="mx-8 mt-4 p-3 bg-error-container text-on-error-container text-xs font-sans rounded border border-error/20 flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+            <span className="material-symbols-outlined text-base">error</span>
+            {submissionError}
+          </div>
+        )}
 
         {/* Scrollable form */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
@@ -1049,57 +1075,49 @@ export default function AdminRegionsPage() {
   };
 
   const handleSave = async (data: EditableRegion) => {
-    try {
-      // 1. Upsert Region
-      const savedRegion = await adminUpsertRegion({
-        id: data.id,
-        slug: data.slug,
-        name: data.name,
-        tagline: data.tagline,
-        hero_label: data.hero_label,
-        hero_image: data.hero_image,
-        description: data.description,
-        specialty_image: data.specialty_image,
-        badge: data.badge,
-        card_description: data.card_description,
-        elevation: data.elevation,
-        difficulty: data.difficulty,
-        best_season: data.best_season,
-        sort_order: data.sort_order,
-        is_published: data.is_published,
-      });
+    // 1. Upsert Region
+    const savedRegion = await adminUpsertRegion({
+      id: data.id,
+      slug: data.slug,
+      name: data.name,
+      tagline: data.tagline,
+      hero_label: data.hero_label,
+      hero_image: data.hero_image,
+      description: data.description,
+      specialty_image: data.specialty_image,
+      badge: data.badge,
+      card_description: data.card_description,
+      elevation: data.elevation,
+      difficulty: data.difficulty,
+      best_season: data.best_season,
+      sort_order: data.sort_order,
+      is_published: data.is_published,
+    });
 
-      // 2. Handle Specialties (Upsert/Delete)
-      if (data.specialties) {
-        // Get current specialties from DB to identify deletions
-        const currentSpecs = data.id ? await adminGetSpecialties(data.id) : [];
-        const currentIds = currentSpecs.map((s) => s.id);
-        const newIds = data.specialties.map((s) => s.id).filter(Boolean);
+    // 2. Handle Specialties (Upsert/Delete)
+    if (data.specialties) {
+      // Get current specialties from DB to identify deletions
+      const currentSpecs = data.id ? await adminGetSpecialties(data.id) : [];
+      const currentIds = currentSpecs.map((s) => s.id);
+      const newIds = data.specialties.map((s) => s.id).filter(Boolean);
 
-        const toDelete = currentIds.filter((id) => !newIds.includes(id));
+      const toDelete = currentIds.filter((id) => !newIds.includes(id));
 
-        await Promise.all([
-          ...data.specialties.map((spec) =>
-            adminUpsertSpecialty({
-              ...spec,
-              region_id: savedRegion.id,
-            }),
-          ),
-          ...toDelete.map((id) => adminDeleteSpecialty(id!)),
-        ]);
-      }
-
-      showToast(`"${data.name}" saved successfully`);
-      loadRegions();
-      setDrawerOpen(false);
-      setEditTarget(null);
-    } catch (err) {
-      if (err instanceof Error) {
-        alert(`Save failed: ${err.message}`);
-      } else {
-        alert("Save failed with an unknown error.");
-      }
+      await Promise.all([
+        ...data.specialties.map((spec) =>
+          adminUpsertSpecialty({
+            ...spec,
+            region_id: savedRegion.id,
+          }),
+        ),
+        ...toDelete.map((id) => adminDeleteSpecialty(id!)),
+      ]);
     }
+
+    showToast(`"${data.name}" saved successfully`);
+    loadRegions();
+    setDrawerOpen(false);
+    setEditTarget(null);
   };
 
   const handleDelete = async () => {

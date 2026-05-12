@@ -17,7 +17,11 @@ async function HomeContent() {
 
   return (
     <>
-      <TopNavBar activePage="home" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="home" 
+        companyName={settings.company_name} 
+        contact={{ email: settings.email, phone: settings.phone }}
+      />
       <main>
         <HeroSection />
         <Statistics />

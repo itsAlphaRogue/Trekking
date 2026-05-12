@@ -52,7 +52,11 @@ export default async function TripsPage({ searchParams }: Props) {
 
   return (
     <>
-      <TopNavBar activePage="treks" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="treks" 
+        companyName={settings.company_name} 
+        contact={{ email: settings.email, phone: settings.phone }}
+      />
       <main className="flex flex-col min-h-screen bg-surface">
         <div className="max-w-7xl w-full mx-auto px-6 md:px-8 py-12 grow">
           <div className="flex flex-col md:flex-row gap-12">

@@ -49,7 +49,11 @@ export default async function RegionPage({ params }: Props) {
 
   return (
     <>
-      <TopNavBar activePage="destinations" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="destinations" 
+        companyName={settings.company_name} 
+        contact={{ email: settings.email, phone: settings.phone }}
+      />
       <main>
         <RegionHero region={region} />
         <RegionStats region={region} />

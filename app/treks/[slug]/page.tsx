@@ -53,7 +53,11 @@ export default async function TrekDetailPage({ params }: Props) {
 
   return (
     <>
-      <TopNavBar activePage="treks" companyName={settings.company_name} />
+      <TopNavBar 
+        activePage="treks" 
+        companyName={settings.company_name} 
+        contact={contact}
+      />
       <main>
         <TrekHero trek={trek} />
         <TrekQuickFacts trek={trek} />
