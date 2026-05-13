@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekInquiryCard({
@@ -49,11 +50,13 @@ export default function TrekInquiryCard({
       {trek.guideName && (
         <div className="mt-8 border-t border-outline-variant pt-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden shrink-0">
-              <img
+            <div className="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden shrink-0 relative">
+              <Image
                 alt={trek.guideName}
                 className="w-full h-full object-cover"
                 src={trek.guideImage || "/fallback.png"}
+                fill
+                sizes="48px"
               />
             </div>
             <div>

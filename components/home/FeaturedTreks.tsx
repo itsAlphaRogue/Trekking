@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { queryTreks } from "@/lib/supabase/queries/treks";
 
 export default async function FeaturedTreks() {
@@ -34,10 +35,12 @@ export default async function FeaturedTreks() {
         {t0 && (
           <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-high h-100 md:h-auto">
             {t0.image && (
-              <img
+              <Image
                 alt={t0.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 src={t0.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 66vw"
               />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
@@ -72,10 +75,12 @@ export default async function FeaturedTreks() {
         {t1 && (
           <div className="md:col-span-4 group relative overflow-hidden bg-surface-container-high h-75 md:h-auto">
             {t1.image && (
-              <img
+              <Image
                 alt={t1.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 src={t1.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
@@ -105,10 +110,12 @@ export default async function FeaturedTreks() {
         {t2 && (
           <div className="md:col-span-4 group relative overflow-hidden bg-surface-container-high h-75 md:h-auto">
             {t2.image && (
-              <img
+              <Image
                 alt={t2.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 src={t2.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
@@ -143,10 +150,12 @@ export default async function FeaturedTreks() {
         {t3 && (
           <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-high h-100 md:h-auto">
             {t3.image && (
-              <img
+              <Image
                 alt={t3.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 src={t3.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 66vw"
               />
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />

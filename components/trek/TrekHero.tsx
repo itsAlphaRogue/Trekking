@@ -1,13 +1,17 @@
+import Image from "next/image";
 import { TrekDetail } from "@/lib/supabase/queries/treks";
 
 export default function TrekHero({ trek }: { trek: TrekDetail }) {
   return (
     <section className="relative h-204.75 flex items-end overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           alt={trek.title}
           className="w-full h-full object-cover"
           src={trek.heroImage || "/fallback.png"}
+          fill
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
       </div>

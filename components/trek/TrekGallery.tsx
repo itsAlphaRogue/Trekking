@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GalleryImage } from "@/lib/supabase/queries/treks";
 
 export default function TrekGallery({ images }: { images: GalleryImage[] }) {
@@ -13,14 +14,16 @@ export default function TrekGallery({ images }: { images: GalleryImage[] }) {
         {images.map((img) => (
           <div
             key={img.id}
-            className={`overflow-hidden bg-surface-container-low ${
+            className={`overflow-hidden bg-surface-container-low relative ${
               img.span === "wide" ? "col-span-2 aspect-video" : "aspect-square"
             }`}
           >
-            <img
+            <Image
               alt={img.alt ?? ""}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               src={img.src || "/fallback.png"}
+              fill
+              sizes="(max-width: 768px) 50vw, 33vw"
             />
           </div>
         ))}

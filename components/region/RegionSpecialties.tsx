@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { RegionDetail, RegionSpecialty } from "@/lib/supabase/queries/regions";
 
 interface Props {
@@ -18,11 +19,15 @@ export default function RegionSpecialties({ region, specialties }: Props) {
           {/* Image */}
           <div className="lg:w-1/2 relative">
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/5 -z-10" />
-            <img
-              className="w-full aspect-4/5 object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-xl"
-              alt={`${region.name} specialty`}
-              src={region.specialty_image || "/fallback.png"}
-            />
+            <div className="relative aspect-4/5 shadow-xl">
+              <Image
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                alt={`${region.name} specialty`}
+                src={region.specialty_image || "/fallback.png"}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
           </div>
 
           {/* Content */}

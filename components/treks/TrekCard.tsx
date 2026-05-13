@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { TrekListing, Difficulty } from "@/lib/supabase/queries/treks";
 
 const difficultyConfig: Record<
@@ -39,10 +40,12 @@ export default function TrekCard({ trek }: { trek: TrekListing }) {
     <article className="bg-surface-container-lowest rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-surface-container-high flex flex-col">
       {/* Image */}
       <div className="relative h-64 overflow-hidden">
-        <img
+        <Image
           alt={trek.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          src={trek.image || "fallback.png"}
+          src={trek.image || "/fallback.png"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div
           className={`absolute top-4 left-4 px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 font-sans ${diff.bg}`}

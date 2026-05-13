@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 type Difficulty = "Easy" | "Moderate" | "Strenuous" | "Challenging" | "Remote";
 
@@ -64,10 +65,12 @@ export default function RegionTreks({ treks }: Props) {
               className="group bg-surface-container-lowest overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300"
             >
               <div className="relative overflow-hidden aspect-3/4">
-                <img
+                <Image
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={trek.title}
                   src={trek.image || "/fallback.png"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div
                   className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur font-sans ${getDifficultyColor(trek.difficulty)}`}

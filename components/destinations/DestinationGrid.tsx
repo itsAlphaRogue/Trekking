@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { RegionListing } from "@/lib/supabase/queries/regions";
 
 interface Props {
@@ -32,11 +33,13 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 1 — large (8 cols) */}
         {r0 && (
           <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-lowest border border-stone-100">
-            <div className="aspect-video overflow-hidden">
-              <img
+            <div className="aspect-video overflow-hidden relative">
+              <Image
                 alt={r0.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r0.heroImage || "fallback.png"}
+                src={r0.heroImage || "/fallback.png"}
+                fill
+                sizes="(max-width: 768px) 100vw, 66vw"
               />
             </div>
             <div className="p-8 md:p-10 flex flex-col md:flex-row justify-between items-start gap-6">
@@ -70,11 +73,13 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 2 — small (4 cols) */}
         {r1 && (
           <div className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100">
-            <div className="aspect-4/5 overflow-hidden">
-              <img
+            <div className="aspect-4/5 overflow-hidden relative">
+              <Image
                 alt={r1.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r1.heroImage || "fallback.png"}
+                src={r1.heroImage || "/fallback.png"}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
@@ -104,11 +109,13 @@ export default function DestinationGrid({ regions }: Props) {
         {/* Position 3 — small (4 cols) */}
         {r2 && (
           <div className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100">
-            <div className="aspect-4/5 overflow-hidden">
-              <img
+            <div className="aspect-4/5 overflow-hidden relative">
+              <Image
                 alt={r2.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r2.heroImage || "fallback.png"}
+                src={r2.heroImage || "/fallback.png"}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
@@ -139,11 +146,13 @@ export default function DestinationGrid({ regions }: Props) {
         {r3 && (
           <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-lowest border border-stone-100">
             <div className="grid md:grid-cols-2 h-full min-h-100">
-              <div className="overflow-hidden">
-                <img
+              <div className="overflow-hidden relative">
+                <Image
                   alt={r3.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  src={r3.heroImage || "fallback.png"}
+                  src={r3.heroImage || "/fallback.png"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
               <div className="p-8 md:p-10 flex flex-col justify-center">
@@ -179,11 +188,13 @@ export default function DestinationGrid({ regions }: Props) {
             key={r.slug}
             className="md:col-span-4 group relative flex flex-col bg-surface-container-lowest border border-stone-100"
           >
-            <div className="aspect-4/5 overflow-hidden">
-              <img
+            <div className="aspect-4/5 overflow-hidden relative">
+              <Image
                 alt={r.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r.heroImage || "fallback.png"}
+                src={r.heroImage || "/fallback.png"}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
             <div className="p-8 flex flex-col flex-1">

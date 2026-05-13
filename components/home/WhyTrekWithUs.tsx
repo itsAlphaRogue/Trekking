@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface WhyTrekWithUsProps {
   companyName?: string;
 }
@@ -11,11 +13,13 @@ export default function WhyTrekWithUs({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-12 items-center">
           {/* Image column */}
           <div className="relative">
-            <div className="aspect-4/5 bg-[#e3e2e0] overflow-hidden">
-              <img
+            <div className="aspect-4/5 bg-[#e3e2e0] overflow-hidden relative">
+              <Image
                 alt="Expert Guide"
                 className="w-full h-full object-cover"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq4bkFawaOprB6w5oEtKc8LooLZ2J2b82ovMYwwavZMsf8O8zXemjBFi8-5k6h3jditjfHBuk1GjiCRr-iIOgDZLYFxBD8vxrtn6fyZ3KsQyZCezBeHDqg3xpNJ0yEsyyPH6Za3y_xtcBDY-IUehH1szicYbl97sQwsnpeHV5RVZZERDrQXct0retc1g5puciQnMOpYbtCoMseqCCAAlriINkscLpvx4b3mvFA_mtmSeYZGIoqbCIu4nz2CKaurc07EtgxsKujIzhd"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
             {/* Floating card */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { adminGetDashboardStats } from "@/lib/supabase/queries/admin";
 
 interface Stat {
@@ -82,10 +83,12 @@ export default function DashboardStats() {
           {/* Background image for revenue card */}
           {stat.bgImage && (
             <div className="absolute inset-0 opacity-10 pointer-events-none">
-              <img
+              <Image
                 className="w-full h-full object-cover"
                 alt=""
                 src={stat.bgImage}
+                fill
+                sizes="(max-width: 768px) 100vw, 25vw"
               />
             </div>
           )}

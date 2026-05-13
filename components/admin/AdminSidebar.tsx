@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { adminGetProfile } from "@/lib/supabase/queries/admin";
@@ -126,11 +127,13 @@ export default function AdminSidebar() {
         {/* User profile */}
         <div className="p-4 border-t border-outline-variant">
           <div className="flex items-center gap-3 p-2">
-            <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden shrink-0">
-              <img
+            <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden shrink-0 relative">
+              <Image
                 alt="Admin"
                 className="w-full h-full object-cover"
                 src={profile?.avatar_url || "/fallback.png"}
+                fill
+                sizes="40px"
               />
             </div>
             <div className="flex-1 min-w-0">

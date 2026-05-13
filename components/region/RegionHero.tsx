@@ -1,13 +1,17 @@
+import Image from "next/image";
 import { RegionDetail } from "@/lib/supabase/queries/regions";
 
 export default function RegionHero({ region }: { region: RegionDetail }) {
   return (
     <header className="relative h-230.25 flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           className="w-full h-full object-cover"
           alt={region.name}
           src={region.hero_image || "/fallback.png"}
+          fill
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-linear-to-r from-primary/60 to-transparent" />
       </div>
