@@ -87,8 +87,6 @@ export default function HeroSection() {
 
             <div className="h-6 w-px bg-white/20 hidden md:block" />
 
-            {/* Custom Dropdown */}
-
             {/* Button */}
             <button
               onClick={handleSearch}

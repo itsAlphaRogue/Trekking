@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { useAdmin } from "./AdminShell";
 
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
@@ -56,39 +57,57 @@ export default function AdminHeader() {
           <span className="material-symbols-outlined text-2xl">menu</span>
         </button>
         <div>
-          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary truncate max-w-[150px] md:max-w-none">
+          <h2 className="font-serif text-lg md:text-xl font-semibold text-primary truncate">
             {match.title}
           </h2>
-          <p className="hidden xs:block text-[10px] md:text-[11px] font-semibold uppercase tracking-widest text-outline font-sans truncate">
+          <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-widest text-outline font-sans">
             {match.subtitle}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 md:gap-5">
-        {/* Notification - hidden on very small screens */}
-        <div className="relative cursor-pointer hidden sm:block">
-          <span className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">
-            notifications
-          </span>
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full" />
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Quick Actions */}
+        <div className="flex items-center gap-1 md:gap-2 pr-2 md:pr-4 border-r border-outline-variant hidden sm:flex">
+          <Link
+            href="/"
+            target="_blank"
+            className="p-2 text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2"
+            title="View Public Site"
+          >
+            <span className="material-symbols-outlined text-xl">open_in_new</span>
+            <span className="hidden xl:inline text-[11px] font-semibold uppercase tracking-wider font-sans">Site</span>
+          </Link>
         </div>
 
-        {/* Date range - hidden on small screens */}
-        <div className="hidden md:flex items-center gap-2 border border-outline-variant px-3 py-2 rounded bg-surface-container-lowest">
-          <span className="material-symbols-outlined text-outline text-sm">
-            calendar_today
-          </span>
-          <span className="text-xs font-semibold font-sans text-on-surface">
-            Oct 24 – Oct 30
-          </span>
-        </div>
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Settings Shortcut */}
+          <Link
+            href="/admin/settings"
+            className="p-2 text-on-surface-variant hover:text-primary transition-colors sm:flex items-center justify-center"
+            title="Admin Settings"
+          >
+            <span className="material-symbols-outlined text-xl">settings</span>
+          </Link>
 
-        {/* New booking - icon only on small screens */}
-        <button className="bg-primary text-on-primary p-2 md:px-5 md:py-2 rounded text-xs font-semibold font-sans flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm">
-          <span className="material-symbols-outlined text-lg">add</span>
-          <span className="hidden md:inline">New Booking</span>
-        </button>
+          {/* Quick Add Menu / Action */}
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/treks"
+              className="bg-primary-container text-on-primary-container px-3 md:px-4 py-2 rounded text-[11px] font-semibold uppercase tracking-wider font-sans flex items-center gap-2 hover:bg-primary-container/80 transition-colors shadow-sm"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              <span className="hidden md:inline">Trek</span>
+            </Link>
+            <Link
+              href="/admin/regions"
+              className="bg-secondary-container text-on-secondary-fixed-variant px-3 md:px-4 py-2 rounded text-[11px] font-semibold uppercase tracking-wider font-sans flex items-center gap-2 hover:bg-secondary-container/80 transition-colors shadow-sm"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              <span className="hidden md:inline">Region</span>
+            </Link>
+          </div>
+        </div>
       </div>
     </header>
   );

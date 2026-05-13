@@ -46,9 +46,11 @@ export default async function FeaturedTreks() {
                 <span className="bg-primary text-white text-xs font-semibold uppercase tracking-widest px-3 py-1 font-sans">
                   {t0.difficulty}
                 </span>
-                <span className="bg-white/20 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-widest px-3 py-1 font-sans">
-                  {t0.duration} DAYS
-                </span>
+                {t0.duration > 0 && (
+                  <span className="bg-white/20 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-widest px-3 py-1 font-sans">
+                    {t0.duration} DAYS
+                  </span>
+                )}
               </div>
               <h3 className="text-white font-serif text-[32px] leading-10 font-semibold mb-2">
                 {t0.title}

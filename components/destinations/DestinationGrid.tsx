@@ -41,17 +41,21 @@ export default function DestinationGrid({ regions }: Props) {
             </div>
             <div className="p-8 md:p-10 flex flex-col md:flex-row justify-between items-start gap-6">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-on-secondary-fixed-variant/10 text-on-secondary-fixed-variant px-3 py-1 text-xs font-semibold uppercase tracking-wider font-sans">
-                    {r0.badge}
-                  </span>
-                </div>
+                {r0.badge && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-on-secondary-fixed-variant/10 text-on-secondary-fixed-variant px-3 py-1 text-xs font-semibold uppercase tracking-wider font-sans">
+                      {r0.badge}
+                    </span>
+                  </div>
+                )}
                 <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-4">
                   {r0.name}
                 </h3>
-                <p className="text-base text-on-surface-variant font-sans">
-                  {r0.cardDescription}
-                </p>
+                {r0.cardDescription && (
+                  <p className="text-base text-on-surface-variant font-sans">
+                    {r0.cardDescription}
+                  </p>
+                )}
               </div>
               <Link
                 href={`/destinations/${r0.slug}`}
@@ -74,15 +78,19 @@ export default function DestinationGrid({ regions }: Props) {
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
-              <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
-                {r1.badge}
-              </span>
+              {r1.badge && (
+                <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
+                  {r1.badge}
+                </span>
+              )}
               <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r1.name}
               </h3>
-              <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
-                {r1.cardDescription}
-              </p>
+              {r1.cardDescription && (
+                <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
+                  {r1.cardDescription}
+                </p>
+              )}
               <Link
                 href={`/destinations/${r1.slug}`}
                 className="border border-primary text-primary font-serif px-6 py-3 text-center hover:bg-primary hover:text-on-primary transition-all active:scale-95 duration-200"
@@ -104,15 +112,19 @@ export default function DestinationGrid({ regions }: Props) {
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
-              <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
-                {r2.badge}
-              </span>
+              {r2.badge && (
+                <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
+                  {r2.badge}
+                </span>
+              )}
               <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r2.name}
               </h3>
-              <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
-                {r2.cardDescription}
-              </p>
+              {r2.cardDescription && (
+                <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
+                  {r2.cardDescription}
+                </p>
+              )}
               <Link
                 href={`/destinations/${r2.slug}`}
                 className="border border-primary text-primary font-serif px-6 py-3 text-center hover:bg-primary hover:text-on-primary transition-all active:scale-95 duration-200"
@@ -135,17 +147,21 @@ export default function DestinationGrid({ regions }: Props) {
                 />
               </div>
               <div className="p-8 md:p-10 flex flex-col justify-center">
-                <div className="mb-4">
-                  <span className="bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 text-xs font-semibold uppercase tracking-wider font-sans">
-                    {r3.badge}
-                  </span>
-                </div>
+                {r3.badge && (
+                  <div className="mb-4">
+                    <span className="bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 text-xs font-semibold uppercase tracking-wider font-sans">
+                      {r3.badge}
+                    </span>
+                  </div>
+                )}
                 <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-4">
                   {r3.name}
                 </h3>
-                <p className="text-base text-on-surface-variant mb-8 font-sans">
-                  {r3.cardDescription}
-                </p>
+                {r3.cardDescription && (
+                  <p className="text-base text-on-surface-variant mb-8 font-sans">
+                    {r3.cardDescription}
+                  </p>
+                )}
                 <Link
                   href={`/destinations/${r3.slug}`}
                   className="bg-primary-container text-on-primary font-serif px-8 py-4 self-start hover:bg-primary transition-colors active:scale-95 duration-200"
@@ -171,15 +187,19 @@ export default function DestinationGrid({ regions }: Props) {
               />
             </div>
             <div className="p-8 flex flex-col flex-1">
-              <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
-                {r.badge}
-              </span>
+              {r.badge && (
+                <span className="text-secondary text-xs font-semibold uppercase tracking-widest mb-3 font-sans">
+                  {r.badge}
+                </span>
+              )}
               <h3 className="font-serif text-[32px] leading-10 font-semibold text-primary mb-3">
                 {r.name}
               </h3>
-              <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
-                {r.cardDescription}
-              </p>
+              {r.cardDescription && (
+                <p className="text-base text-on-surface-variant mb-8 flex-1 font-sans">
+                  {r.cardDescription}
+                </p>
+              )}
               <Link
                 href={`/destinations/${r.slug}`}
                 className="border border-primary text-primary font-serif px-6 py-3 text-center hover:bg-primary hover:text-on-primary transition-all active:scale-95 duration-200"

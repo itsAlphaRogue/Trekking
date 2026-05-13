@@ -2,14 +2,16 @@ import { RegionDetail } from "@/lib/supabase/queries/regions";
 
 export default function RegionStats({ region }: { region: RegionDetail }) {
   const stats = [
-    { icon: "terrain", label: "Avg Elevation", value: region.elevation ?? "—" },
-    { icon: "speed", label: "Difficulty", value: region.difficulty ?? "—" },
+    { icon: "terrain", label: "Avg Elevation", value: region.elevation },
+    { icon: "speed", label: "Difficulty", value: region.difficulty },
     {
       icon: "calendar_month",
       label: "Best Season",
-      value: region.best_season ?? "—",
+      value: region.best_season,
     },
-  ];
+  ].filter((stat) => stat.value !== null && stat.value !== undefined);
+
+  if (stats.length === 0) return null;
 
   return (
     <section className="py-30 px-6 md:px-8 max-w-7xl mx-auto">

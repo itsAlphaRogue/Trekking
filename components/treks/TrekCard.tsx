@@ -81,14 +81,16 @@ export default function TrekCard({ trek }: { trek: TrekListing }) {
 
         <div className="border-t border-surface-container py-6 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold uppercase tracking-widest text-outline font-sans">
-                Duration
-              </span>
-              <span className="text-base font-bold text-primary font-sans">
-                {trek.duration} Days
-              </span>
-            </div>
+            {trek.duration > 0 && (
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold uppercase tracking-widest text-outline font-sans">
+                  Duration
+                </span>
+                <span className="text-base font-bold text-primary font-sans">
+                  {trek.duration} Days
+                </span>
+              </div>
+            )}
             <div className="flex flex-col">
               <span className="text-xs font-semibold uppercase tracking-widest text-outline font-sans">
                 Price

@@ -13,15 +13,20 @@ export default function RegionHero({ region }: { region: RegionDetail }) {
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 w-full">
         <div className="max-w-2xl">
-          <span className="inline-block bg-secondary-container text-on-secondary-container px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] mb-6 font-sans">
-            {region.hero_label}
-          </span>
+          {region.hero_label && (
+            <span className="inline-block bg-secondary-container text-on-secondary-container px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] mb-6 font-sans">
+              {region.hero_label}
+            </span>
+          )}
           <h1 className="font-serif text-5xl md:text-[64px] leading-tight md:leading-18 tracking-tight font-bold text-on-primary mb-6">
-            {region.name}: {region.tagline}
+            {region.name}
+            {region.tagline && `: ${region.tagline}`}
           </h1>
-          <p className="text-lg leading-relaxed text-on-primary/90 italic max-w-lg font-sans">
-            {region.description}
-          </p>
+          {region.description && (
+            <p className="text-lg leading-relaxed text-on-primary/90 italic max-w-lg font-sans">
+              {region.description}
+            </p>
+          )}
         </div>
       </div>
     </header>
