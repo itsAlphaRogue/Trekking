@@ -49,6 +49,38 @@ export async function adminUpsertRegion(region: {
 export async function adminDeleteRegion(id: string) {
   const supabase = await createClient();
 
+  // 1. Get region details first (especially slug for treks check)
+  const { data: region, error: regionError } = await supabase
+    .from("regions")
+    .select("slug, name")
+    .eq("id", id)
+    .single();
+
+  if (regionError) throw new Error(regionError.message);
+  if (!region) throw new Error("Region not found");
+
+  // 2. Check for associated treks
+  const { count: trekCount, error: trekError } = await supabase
+    .from("treks")
+    .select("id", { count: "exact", head: true })
+    .eq("region_slug", region.slug);
+
+  if (trekError) throw new Error(trekError.message);
+  if (trekCount && trekCount > 0) {
+    throw new Error(
+      `Cannot delete "${region.name}" because it has ${trekCount} associated trek(s). Please delete or reassign those treks first.`
+    );
+  }
+
+  // 3. Delete associated specialties first (to avoid FK issues if not CASCADE)
+  const { error: specError } = await supabase
+    .from("region_specialties")
+    .delete()
+    .eq("region_id", id);
+
+  if (specError) throw new Error(specError.message);
+
+  // 4. Finally delete the region
   const { error } = await supabase
     .from("regions")
     .delete()
@@ -158,6 +190,21 @@ export async function adminUpsertTrek(trek: {
 export async function adminDeleteTrek(id: string) {
   const supabase = await createClient();
 
+  // 1. Delete associated itinerary days
+  const { error: itineraryError } = await supabase
+    .from("itinerary_days")
+    .delete()
+    .eq("trek_id", id);
+  if (itineraryError) throw new Error(itineraryError.message);
+
+  // 2. Delete associated gallery images
+  const { error: galleryError } = await supabase
+    .from("gallery_images")
+    .delete()
+    .eq("trek_id", id);
+  if (galleryError) throw new Error(galleryError.message);
+
+  // 3. Finally delete the trek
   const { error } = await supabase
     .from("treks")
     .delete()

@@ -94,7 +94,7 @@ export default function HeroSection() {
             {/* Button */}
             <button
               onClick={handleSearch}
-              className="w-full md:w-auto bg-white text-primary-container px-8 py-4 text-xs font-semibold uppercase tracking-widest hover:bg-stone-100 transition-colors whitespace-nowrap"
+              className="w-full md:w-auto bg-white text-primary-container px-8 py-4 text-xs font-semibold uppercase tracking-widest hover:bg-stone-300 hover:cursor-pointer transition-colors whitespace-nowrap"
             >
               Search Treks
             </button>
