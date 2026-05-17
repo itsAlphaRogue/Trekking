@@ -9,7 +9,7 @@ export default function RegionStats({ region }: { region: RegionDetail }) {
       label: "Best Season",
       value: region.best_season,
     },
-  ].filter((stat) => stat.value !== null && stat.value !== undefined);
+  ].filter((stat) => stat.value && stat.value.trim() !== "");
 
   if (stats.length === 0) return null;
 

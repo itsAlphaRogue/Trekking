@@ -72,11 +72,13 @@ export default function RegionTreks({ treks }: Props) {
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
-                <div
-                  className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur font-sans ${getDifficultyColor(trek.difficulty)}`}
-                >
-                  {trek.difficulty.toUpperCase()}
-                </div>
+                {trek.difficulty && (
+                  <div
+                    className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur font-sans ${getDifficultyColor(trek.difficulty)}`}
+                  >
+                    {trek.difficulty.toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <div className="p-8 grow flex flex-col">
@@ -92,7 +94,7 @@ export default function RegionTreks({ treks }: Props) {
                       schedule
                     </span>
                     <span className="text-xs font-semibold uppercase tracking-widest font-sans">
-                      {trek.duration} Days
+                      {trek.duration ? `${trek.duration} Days` : "TBD"}
                     </span>
                   </div>
                   <div className="text-right">
@@ -100,7 +102,7 @@ export default function RegionTreks({ treks }: Props) {
                       From
                     </p>
                     <p className="font-serif text-xl font-semibold text-primary">
-                      ${trek.price_from?.toLocaleString()}
+                      {trek.price_from ? `$${trek.price_from.toLocaleString()}` : "Inquire"}
                     </p>
                   </div>
                 </div>

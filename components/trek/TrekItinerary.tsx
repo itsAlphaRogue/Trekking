@@ -9,6 +9,24 @@ export default function TrekItinerary({ days }: { days: ItineraryDay[] }) {
         The Expedition Itinerary
       </h2>
 
+      <div className="bg-secondary-container/30 border-l-4 border-secondary p-4 mb-10 rounded-r-lg">
+        <p className="text-sm text-on-secondary-container font-sans flex items-start gap-3">
+          <span
+            className="material-symbols-outlined text-secondary shrink-0"
+            style={{ fontSize: "20px" }}
+          >
+            edit_note
+          </span>
+
+          <span>
+            <strong className="text-secondary">Tailor It Your Way.</strong>{" "}
+            Every expedition is{" "}
+            <span className="font-black">Fully Customizable</span>. From pace
+            and acclimatization days to hidden trails and exclusive experiences.
+          </span>
+        </p>
+      </div>
+
       <div className="space-y-0">
         {days.map((item, index) => {
           const isLast = index === days.length - 1;
