@@ -1,20 +1,18 @@
 ------------
 TO DO
 ------------
-temperature auto degree celcius, meter
 video support
-card short description line limit using tailwind
-customiable itineray
-Difficulty range select in admin
-no data handle in destination/[slug]
 home page shows only 4???
 using resend to send mail from contact page
 
 ------------
 Done
 ------------
+no data handle in destination/[slug]
+itineray is customiable
 Dynamic region in treks page
 link in whatsapp message
+card short description line limit using tailwind
 
 
 

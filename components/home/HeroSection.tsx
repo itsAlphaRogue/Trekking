@@ -1,23 +1,15 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function HeroSection() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("Spring");
   const [query, setQuery] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const options = ["Spring", "Autumn", "Summer", "Winter"];
 
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
-    // Note: The /treks page doesn't seem to support 'season' directly yet based on its filters,
-    // but we can pass it anyway or potentially use it for future features.
-    // For now, let's at least make the search work.
     router.push(`/treks?${params.toString()}`);
   };
 
@@ -26,19 +18,6 @@ export default function HeroSection() {
       handleSearch();
     }
   };
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <section className="relative h-180 flex items-center">
@@ -58,10 +37,6 @@ export default function HeroSection() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-8 w-full relative z-10">
         <div className="max-w-2xl">
-          <span className="text-white text-xs font-semibold uppercase tracking-widest mb-4 block">
-            Peak Performance Guiding
-          </span>
-
           <h1 className="text-white text-5xl md:text-[64px] leading-tight font-bold mb-8">
             Scale the Roof of the World.
           </h1>
