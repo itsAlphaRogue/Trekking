@@ -78,7 +78,7 @@ export default function TrekCard({ trek }: { trek: TrekListing }) {
           </button>
         </div>
 
-        <p className="text-base text-on-surface-variant mb-6 grow font-sans">
+        <p className="text-base text-on-surface-variant mb-6 grow font-sans line-clamp-2">
           {trek.description}
         </p>
 

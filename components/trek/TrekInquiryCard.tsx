@@ -8,14 +8,18 @@ export default function TrekInquiryCard({
   trek: TrekDetail;
   contact: { email: string; phone: string };
 }) {
+  const trekUrl = `https://himalayanvistas.com/treks/${trek.slug}`;
   const whatsappMsg = encodeURIComponent(
-    `Hi, I'm interested in the ${trek.title}. Can you provide more details?`,
+    `Hi, I'm interested in the ${trek.title} (${trekUrl}). Can you provide more details?`,
   );
   // Clean phone number: remove non-numeric except leading +
   const cleanPhone = contact.phone.replace(/[^\d+]/g, "");
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappMsg}`;
   const emailSubject = encodeURIComponent(`Inquiry: ${trek.title}`);
-  const emailUrl = `mailto:${contact.email}?subject=${emailSubject}`;
+  const emailBody = encodeURIComponent(
+    `Hi,\n\nI'm interested in the ${trek.title}.\nLink: ${trekUrl}\n\nCan you provide more details?`,
+  );
+  const emailUrl = `mailto:${contact.email}?subject=${emailSubject}&body=${emailBody}`;
 
   return (
     <div className="sticky top-32 bg-surface-container-lowest p-8 border border-outline-variant shadow-sm">

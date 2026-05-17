@@ -7,6 +7,7 @@ import TrekCard from "@/components/treks/TrekCard";
 import TripsPagination from "@/components/treks/TreksPagination";
 import { queryTreks, Difficulty } from "@/lib/supabase/queries/treks";
 import { getSettings } from "@/lib/supabase/queries/settings";
+import { getRegions } from "@/lib/supabase/queries/regions";
 
 export const metadata = {
   title: "All Treks | Himalayan Vistas",
@@ -22,9 +23,10 @@ interface Props {
 }
 
 export default async function TripsPage({ searchParams }: Props) {
-  const [sp, settings] = await Promise.all([
+  const [sp, settings, regions] = await Promise.all([
     searchParams,
     getSettings(),
+    getRegions(),
   ]);
 
   const filters = {
@@ -61,7 +63,7 @@ export default async function TripsPage({ searchParams }: Props) {
         <div className="max-w-7xl w-full mx-auto px-6 md:px-8 py-12 grow">
           <div className="flex flex-col md:flex-row gap-12">
             <Suspense fallback={<div className="w-80 shrink-0" />}>
-              <TripsFilters />
+              <TripsFilters regions={regions} />
             </Suspense>
 
             <section className="grow min-w-0">

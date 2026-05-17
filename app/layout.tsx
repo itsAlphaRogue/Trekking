@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Noto_Serif, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
+import { getSettings } from "@/lib/supabase/queries/settings";
+
+const settings = await getSettings();
 
 export const metadata: Metadata = {
-  title: "Himalayan Vistas",
+  title: settings.company_name,
   description:
     "Elite Himalayan trekking expeditions with premium safety protocols",
 };

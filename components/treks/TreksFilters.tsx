@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useTransition, useState, useEffect } from "react";
 import { Difficulty } from "@/lib/supabase/queries/treks";
+import { RegionListing } from "@/lib/supabase/queries/regions";
 
 const DIFFICULTIES: Difficulty[] = [
   "Easy",
@@ -10,14 +11,8 @@ const DIFFICULTIES: Difficulty[] = [
   "Strenuous",
   "Challenging",
 ];
-const REGIONS = [
-  { value: "everest", label: "Everest Region" },
-  { value: "annapurna", label: "Annapurna Massif" },
-  { value: "manaslu", label: "Manaslu Circuit" },
-  { value: "langtang", label: "Langtang Valley" },
-];
 
-export default function TreksFilters() {
+export default function TreksFilters({ regions }: { regions: RegionListing[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -214,21 +209,26 @@ export default function TreksFilters() {
           <span className="block text-xs font-semibold uppercase tracking-widest mb-4 font-sans">
             Regions
           </span>
-          {REGIONS.map((r) => (
-            <label
-              key={r.value}
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={currentRegions.includes(r.value)}
-                onChange={() =>
-                  toggleArrayParam("region", r.value, currentRegions)
-                }
-              />
-              <span className="font-sans">{r.label}</span>
-            </label>
-          ))}
+          <div className="flex flex-col gap-2">
+            {regions.map((r) => (
+              <label
+                key={r.slug}
+                className="flex items-center gap-3 cursor-pointer group"
+              >
+                <input
+                  type="checkbox"
+                  checked={currentRegions.includes(r.slug)}
+                  onChange={() =>
+                    toggleArrayParam("region", r.slug, currentRegions)
+                  }
+                  className="w-4 h-4 accent-primary"
+                />
+                <span className="font-sans text-on-surface-variant group-hover:text-primary transition-colors">
+                  {r.name}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Price */}
