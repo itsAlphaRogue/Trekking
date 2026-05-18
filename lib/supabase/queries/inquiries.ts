@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 export async function submitInquiry(data: {
   name: string;
   email: string;
+  phone: string;
   trek: string;
   message: string;
 }) {
@@ -12,6 +13,7 @@ export async function submitInquiry(data: {
     {
       name: data.name,
       email: data.email,
+      phone: data.phone,
       trek: data.trek,
       message: data.message,
     },

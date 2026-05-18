@@ -4,6 +4,7 @@ import { useState } from "react";
 import { submitInquiry } from "@/lib/supabase/queries/inquiries";
 
 const TREK_OPTIONS = [
+  "Select a Trek (Optional)",
   "Everest Base Camp Trek",
   "Annapurna Circuit",
   "Upper Mustang Expedition",
@@ -22,6 +23,7 @@ export default function ContactForm() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     trek: TREK_OPTIONS[0],
     message: "",
   });
@@ -31,10 +33,17 @@ export default function ContactForm() {
     setLoading(true);
     setError(null);
     try {
-      await submitInquiry(form);
+      const submissionData = {
+        ...form,
+        trek: form.trek === TREK_OPTIONS[0] ? "" : form.trek,
+      };
+      await submitInquiry(submissionData);
       setSubmitted(true);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -79,21 +88,23 @@ export default function ContactForm() {
       </h2>
 
       <form className="space-y-8" onSubmit={handleSubmit}>
-        {/* Name + Email */}
+        {/* Name */}
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
+            Full Name
+          </label>
+          <input
+            required
+            type="text"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
+            placeholder="Tenzing Norgay"
+          />
+        </div>
+
+        {/* Email + Phone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
-              Full Name
-            </label>
-            <input
-              required
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
-              placeholder="Tenzing Norgay"
-            />
-          </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
               Email Address
@@ -105,6 +116,19 @@ export default function ContactForm() {
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
               placeholder="explorer@himalaya.com"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-widest text-on-surface-variant mb-2 font-sans">
+              Phone Number
+            </label>
+            <input
+              required
+              type="tel"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              className="w-full bg-surface-container-lowest border-0 border-b border-secondary px-0 py-3 focus:ring-0 focus:border-primary focus:outline-none transition-all text-base font-sans placeholder:text-on-surface-variant/50"
+              placeholder="+977 9801234567"
             />
           </div>
         </div>
