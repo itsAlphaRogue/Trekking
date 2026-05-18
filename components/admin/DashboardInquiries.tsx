@@ -41,7 +41,7 @@ export default function DashboardInquiries() {
         </Link>
       </div>
 
-      <div className="flex-1 overflow-x-auto min-h-[300px]">
+      <div className="flex-1 overflow-x-auto">
         {loading ? (
           <div className="h-full flex items-center justify-center py-10">
             <span className="material-symbols-outlined animate-spin text-primary">
@@ -98,7 +98,7 @@ export default function DashboardInquiries() {
                     <td className="px-6 py-5">
                       <span
                         className={`px-3 py-1 rounded-full text-[10px] font-semibold font-sans ${getStatusClass(
-                          row.status
+                          row.status,
                         )}`}
                       >
                         {row.status}

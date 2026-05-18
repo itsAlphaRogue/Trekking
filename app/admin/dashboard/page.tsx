@@ -11,7 +11,7 @@ export default function AdminDashboardPage() {
       {/* Main grid — inquiries table + widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
         <DashboardInquiries />
-        <DashboardWidgets />
+        {/* <DashboardWidgets /> */}
       </div>
     </div>
   );

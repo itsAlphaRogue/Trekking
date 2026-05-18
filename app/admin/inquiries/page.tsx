@@ -26,6 +26,54 @@ const STATUS_OPTIONS: (InquiryStatus | "All")[] = [
   "Closed",
 ];
 
+// ─── Delete Confirm Dialog ──────────────────────────────────────────────────
+
+function DeleteDialog({
+  inquiry,
+  onConfirm,
+  onCancel,
+}: {
+  inquiry: Inquiry;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onCancel}
+      />
+      <div className="relative bg-surface rounded-lg border border-outline-variant shadow-2xl p-8 max-w-sm w-full animate-in zoom-in duration-300">
+        <div className="w-12 h-12 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="material-symbols-outlined text-error">
+            delete_forever
+          </span>
+        </div>
+        <h3 className="font-serif text-xl font-bold text-on-surface text-center mb-2">
+          Delete Inquiry?
+        </h3>
+        <p className="text-xs text-on-surface-variant text-center font-sans mb-6 leading-relaxed">
+          The inquiry from <span className="font-bold text-on-surface">{inquiry.name}</span> will be permanently removed. This cannot be undone.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 border border-outline-variant text-on-surface-variant rounded-md px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest font-sans hover:bg-surface-container transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 bg-error text-on-error rounded-md px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest font-sans hover:opacity-90 transition-opacity"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Helper: Initials ────────────────────────────────────────────────────────
 
 function getInitials(name: string) {
@@ -45,6 +93,7 @@ export default function AdminInquiriesPage() {
   const [selected, setSelected] = useState<Inquiry | null>(null);
   const [filter, setFilter] = useState<InquiryStatus | "All">("All");
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Inquiry | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -116,15 +165,15 @@ export default function AdminInquiriesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this inquiry?")) return;
+  const handleDelete = async (inq: Inquiry) => {
     try {
-      await adminDeleteInquiry(id);
-      const nextList = inquiries.filter((inq) => inq.id !== id);
+      await adminDeleteInquiry(inq.id);
+      const nextList = inquiries.filter((i) => i.id !== inq.id);
       setInquiries(nextList);
-      if (selected?.id === id) {
+      if (selected?.id === inq.id) {
         setSelected(nextList[0] || null);
       }
+      setDeleteTarget(null);
     } catch (error) {
       console.error("Failed to delete inquiry:", error);
       alert("Failed to delete inquiry.");
@@ -233,20 +282,20 @@ export default function AdminInquiriesPage() {
           justify-between bg-surface-container-lowest shrink-0"
             >
               <div className="flex items-center gap-3">
-                <div
+                {/* <div
                   className="w-9 h-9 rounded-full bg-primary-container text-on-primary-container
           flex items-center justify-center text-[10px] font-bold font-sans"
                 >
                   {" "}
                   {getInitials(selected.name)}
-                </div>
+                </div> */}
                 <div>
                   <h3 className="font-serif text-base font-bold text-primary leading-tight">
                     {selected.name}
                   </h3>
-                  <p className="text-[11px] text-on-surface-variant font-sans leading-none mt-0.5">
+                  {/* <p className="text-[11px] text-on-surface-variant font-sans leading-none mt-0.5">
                     {selected.email}
-                  </p>
+                  </p> */}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -279,7 +328,7 @@ export default function AdminInquiriesPage() {
                   <option value="Closed">Closed</option>
                 </select>
                 <button
-                  onClick={() => handleDelete(selected.id)}
+                  onClick={() => setDeleteTarget(selected)}
                   className="w-8 h-8 flex items-center justify-center text-outline hover:text-error transition-colors"
                   title="Delete Inquiry"
                 >
@@ -440,6 +489,15 @@ export default function AdminInquiriesPage() {
           </div>
         )}
       </div>
+
+      {/* ── Delete Confirm ── */}
+      {deleteTarget && (
+        <DeleteDialog
+          inquiry={deleteTarget}
+          onConfirm={() => handleDelete(deleteTarget)}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
     </div>
   );
 }
