@@ -891,23 +891,6 @@ function RegionDrawer({
                 <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
                   Regional Specialties
                 </label>
-                <button
-                  onClick={() => {
-                    const newSpecs = [...(form.specialties || [])];
-                    newSpecs.push({
-                      region_id: form.id || "",
-                      number: String(newSpecs.length + 1).padStart(2, "0"),
-                      title: "",
-                      description: "",
-                      sort_order: newSpecs.length,
-                    });
-                    setField("specialties", newSpecs);
-                  }}
-                  className="text-primary text-[10px] font-semibold uppercase tracking-widest font-sans flex items-center gap-1 hover:underline"
-                >
-                  <span className="material-symbols-outlined text-sm">add</span>
-                  Add Specialty
-                </button>
               </div>
 
               {!form.specialties?.length ? (
@@ -991,6 +974,26 @@ function RegionDrawer({
                   ))}
                 </div>
               )}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    const newSpecs = [...(form.specialties || [])];
+                    newSpecs.push({
+                      region_id: form.id || "",
+                      number: String(newSpecs.length + 1).padStart(2, "0"),
+                      title: "",
+                      description: "",
+                      sort_order: newSpecs.length,
+                    });
+                    setField("specialties", newSpecs);
+                  }}
+                  className="w-full py-4 border-2 border-dashed border-outline-variant rounded-lg text-outline hover:text-primary hover:border-primary hover:bg-surface-container-low transition-all text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-base">add</span>
+                  Add Specialty
+                </button>
+              </div>
             </div>
           )}
         </div>

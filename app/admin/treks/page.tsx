@@ -823,24 +823,6 @@ function PackageDrawer({
                 <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
                   Itinerary Days
                 </label>
-                <button
-                  onClick={() => {
-                    const newItin = [...(form.itinerary || [])];
-                    newItin.push({
-                      trek_id: form.id || "",
-                      day: `Day ${newItin.length + 1}`,
-                      title: "",
-                      description: "",
-                      is_collapsed: false,
-                      sort_order: newItin.length,
-                    });
-                    setField("itinerary", newItin);
-                  }}
-                  className="text-primary text-[10px] font-semibold uppercase tracking-widest font-sans flex items-center gap-1 hover:underline"
-                >
-                  <span className="material-symbols-outlined text-sm">add</span>
-                  Add Day
-                </button>
               </div>
 
               {!form.itinerary?.length ? (
@@ -903,6 +885,27 @@ function PackageDrawer({
                   ))}
                 </div>
               )}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    const newItin = [...(form.itinerary || [])];
+                    newItin.push({
+                      trek_id: form.id || "",
+                      day: `Day ${newItin.length + 1}`,
+                      title: "",
+                      description: "",
+                      is_collapsed: false,
+                      sort_order: newItin.length,
+                    });
+                    setField("itinerary", newItin);
+                  }}
+                  className="w-full py-4 border-2 border-dashed border-outline-variant rounded-lg text-outline hover:text-primary hover:border-primary hover:bg-surface-container-low transition-all text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-base">add</span>
+                  Add Day
+                </button>
+              </div>
             </div>
           )}
 
@@ -912,23 +915,6 @@ function PackageDrawer({
                 <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
                   Gallery Images
                 </label>
-                <button
-                  onClick={() => {
-                    const next = [...(form.gallery || [])];
-                    next.push({
-                      trek_id: form.id || "",
-                      src: "",
-                      alt: "",
-                      span: "normal",
-                      sort_order: next.length,
-                    });
-                    setField("gallery", next);
-                  }}
-                  className="text-primary text-[10px] font-semibold uppercase tracking-widest font-sans flex items-center gap-1 hover:underline"
-                >
-                  <span className="material-symbols-outlined text-sm">add</span>
-                  Add Image
-                </button>
               </div>
 
               {!form.gallery?.length ? (
@@ -990,6 +976,26 @@ function PackageDrawer({
                   ))}
                 </div>
               )}
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    const next = [...(form.gallery || [])];
+                    next.push({
+                      trek_id: form.id || "",
+                      src: "",
+                      alt: "",
+                      span: "normal",
+                      sort_order: next.length,
+                    });
+                    setField("gallery", next);
+                  }}
+                  className="w-full py-4 border-2 border-dashed border-outline-variant rounded-lg text-outline hover:text-primary hover:border-primary hover:bg-surface-container-low transition-all text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-base">add</span>
+                  Add Image
+                </button>
+              </div>
             </div>
           )}
         </div>
