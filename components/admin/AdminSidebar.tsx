@@ -11,6 +11,7 @@ import { useAdmin } from "./AdminShell";
 
 const navItems = [
   { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
+  { href: "/admin/inquiries", icon: "mail", label: "Inquiries" },
   { href: "/admin/treks", icon: "hiking", label: "treks" },
   { href: "/admin/regions", icon: "terrain", label: "Regions" },
   { href: "/admin/settings", icon: "settings", label: "Settings" },
