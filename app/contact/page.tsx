@@ -23,7 +23,7 @@ export default async function ContactPage() {
         contact={contact}
       />
       <main className="relative">
-        <ContactHero />
+        <ContactHero heroImage={settings.contact_hero_image} />
 
         {/* Main content grid */}
         <section className="max-w-7xl mx-auto px-6 md:px-8 py-24 relative">

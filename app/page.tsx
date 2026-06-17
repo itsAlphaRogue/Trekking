@@ -23,10 +23,13 @@ async function HomeContent() {
         contact={{ email: settings.email, phone: settings.phone }}
       />
       <main>
-        <HeroSection />
+        <HeroSection heroImage={settings.home_hero_image} />
         <Statistics />
         <FeaturedTreks />
-        <WhyTrekWithUs companyName={settings.company_name} />
+        <WhyTrekWithUs 
+          companyName={settings.company_name} 
+          imageUrl={settings.why_trek_image}
+        />
       </main>
       <Footer settings={settings} />
     </>

@@ -13,7 +13,7 @@ import {
 } from "@/lib/supabase/queries/settings";
 import { uploadImage } from "@/lib/supabase/storage";
 
-type Tab = "profile" | "website" | "security";
+type Tab = "profile" | "website" | "heroes" | "security";
 
 export default function AdminSettingsPage() {
   const router = useRouter();
@@ -47,6 +47,10 @@ export default function AdminSettingsPage() {
     youtube_url: "",
     tiktok_url: "",
     default_currency: "USD",
+    home_hero_image: "",
+    contact_hero_image: "",
+    destinations_hero_image: "",
+    why_trek_image: "",
   });
 
   // Password state
@@ -98,15 +102,20 @@ export default function AdminSettingsPage() {
     }
   };
 
-  const handleSettingsUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSettingsUpdate = async (
+    e?: React.FormEvent,
+    newSettings?: Partial<Settings>,
+  ) => {
+    if (e) e.preventDefault();
     setSaving(true);
     setMessage(null);
     try {
-      await updateSettings(settings);
+      const payload = newSettings ? { ...settings, ...newSettings } : settings;
+      await updateSettings(payload);
+      if (newSettings) setSettings((prev) => ({ ...prev, ...newSettings }));
       setMessage({
         type: "success",
-        text: "Website settings updated successfully.",
+        text: "Settings updated successfully.",
       });
       router.refresh();
     } catch (err) {
@@ -165,9 +174,38 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const handleHeroImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof Settings,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaving(true);
+    setMessage(null);
+    try {
+      // eslint-disable-next-line react-hooks/purity
+      const timestamp = Date.now();
+      const url = await uploadImage(
+        file,
+        "trek-images",
+        `site/${field}-${timestamp}-${file.name}`,
+      );
+      await handleSettingsUpdate(undefined, { [field]: url });
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: `Failed to upload ${field.replace(/_/g, " ")}.`,
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const tabs: { key: Tab; label: string; icon: string }[] = [
     { key: "profile", label: "Profile", icon: "person" },
     { key: "website", label: "Website", icon: "language" },
+    { key: "heroes", label: "Hero Images", icon: "image" },
     { key: "security", label: "Security", icon: "lock" },
   ];
 
@@ -439,6 +477,76 @@ export default function AdminSettingsPage() {
               {saving ? "Saving..." : "Save Website Settings"}
             </button>
           </form>
+        </div>
+      )}
+
+      {tab === "heroes" && (
+        <div className="bg-surface border border-outline-variant rounded overflow-hidden">
+          <div className="px-8 py-5 border-b border-outline-variant">
+            <h3 className="font-serif text-lg font-semibold text-primary">
+              Hero Images
+            </h3>
+            <p className="text-xs text-on-surface-variant font-sans mt-1">
+              Manage the large hero images used on the main pages of your
+              website.
+            </p>
+          </div>
+          <div className="p-8 space-y-8">
+            {[
+              {
+                label: "Home Page Hero",
+                field: "home_hero_image" as keyof Settings,
+              },
+              {
+                label: "Why Trek With Us Image",
+                field: "why_trek_image" as keyof Settings,
+              },
+              {
+                label: "Destinations Page Hero",
+                field: "destinations_hero_image" as keyof Settings,
+              },
+              {
+                label: "Contact Page Hero",
+                field: "contact_hero_image" as keyof Settings,
+              },
+            ].map((item) => (
+              <div key={item.field} className="space-y-4">
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-outline font-sans">
+                  {item.label}
+                </label>
+                <div className="relative group rounded-lg overflow-hidden border border-outline-variant bg-surface-container-lowest aspect-video max-w-2xl">
+                  {settings[item.field] ? (
+                    <img
+                      src={settings[item.field] as string}
+                      alt={item.label}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-outline-variant">
+                      <span className="material-symbols-outlined text-4xl">
+                        image
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <label className="cursor-pointer bg-surface text-primary px-4 py-2 rounded text-xs font-semibold font-sans hover:bg-primary-container transition-colors">
+                      {saving ? "Uploading..." : "Change Image"}
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => handleHeroImageChange(e, item.field)}
+                        disabled={saving}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <p className="text-[10px] text-outline font-sans">
+                  Recommended: 1920x1080px (16:9 ratio).
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -26,7 +26,7 @@ export default async function DestinationsPage() {
         contact={{ email: settings.email, phone: settings.phone }}
       />
       <main>
-        <DestinationsHero />
+        <DestinationsHero heroImage={settings.destinations_hero_image} />
         <DestinationGrid regions={regions} />
         <DestinationsTrust />
       </main>

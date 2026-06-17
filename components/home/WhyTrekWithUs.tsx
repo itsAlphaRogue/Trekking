@@ -2,35 +2,54 @@ import Image from "next/image";
 
 interface WhyTrekWithUsProps {
   companyName?: string;
+  imageUrl?: string;
 }
 
-export default function WhyTrekWithUs({ 
-  companyName = "Himalayan Vistas" 
+export default function WhyTrekWithUs({
+  companyName = "Himalayan Vistas",
+  imageUrl = "https://images.unsplash.com/photo-1551632432-c735e8326f67?q=80&w=2070&auto=format&fit=crop",
 }: WhyTrekWithUsProps) {
   return (
     <section className="bg-surface-container-low py-30">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-12 items-center">
           {/* Image column */}
-          <div className="relative">
-            <div className="aspect-4/5 bg-[#e3e2e0] overflow-hidden relative">
+          <div className="relative lg:pr-12 group">
+            {/* Background Accent Frame - Inspired by Himalayan adventure branding */}
+            <div className="absolute inset-0 border border-secondary/20 rounded-3xl translate-x-6 translate-y-6 z-0 hidden md:block transition-transform duration-500 group-hover:translate-x-4 group-hover:translate-y-4"></div>
+
+            <div className="aspect-4/5 bg-surface-container-highest overflow-hidden relative rounded-2xl shadow-2xl border-4 border-white z-10">
               <Image
-                alt="Expert Guide"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq4bkFawaOprB6w5oEtKc8LooLZ2J2b82ovMYwwavZMsf8O8zXemjBFi8-5k6h3jditjfHBuk1GjiCRr-iIOgDZLYFxBD8vxrtn6fyZ3KsQyZCezBeHDqg3xpNJ0yEsyyPH6Za3y_xtcBDY-IUehH1szicYbl97sQwsnpeHV5RVZZERDrQXct0retc1g5puciQnMOpYbtCoMseqCCAAlriINkscLpvx4b3mvFA_mtmSeYZGIoqbCIu4nz2CKaurc07EtgxsKujIzhd"
+                alt="Sherpa Guide Portrait"
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                src={imageUrl}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
+              {/* Subtle depth overlay */}
+              <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-60"></div>
             </div>
-            {/* Floating card */}
-            <div className="absolute -bottom-12 -right-12 bg-primary-container p-12 text-white max-w-xs hidden md:block">
-              <h4 className="font-serif text-[32px] leading-10 font-semibold mb-4 text-on-primary-container">
-                Safety First.
-              </h4>
-              <p className="text-base opacity-80 font-sans">
-                Our guides carry oxygen, satellite communications, and medical
-                kits on every trip.
-              </p>
+
+            {/* Expertise Card - Premium Glassmorphism design */}
+            <div className="absolute -bottom-10 -right-6 md:-bottom-14 md:-right-10 bg-white/95 backdrop-blur-xl p-8 md:p-10 shadow-2xl rounded-2xl border border-stone-100 max-w-70 md:max-w-sm hidden md:block z-20 transition-all duration-500 hover:-translate-y-2">
+              <div className="space-y-6">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="w-10 h-0.5 bg-secondary/40"></span>
+                    <span className="text-secondary font-bold text-xs tracking-[0.2em] uppercase">
+                      20+ Years
+                    </span>
+                  </div>
+                  <h4 className="font-serif text-2xl md:text-[32px] leading-[1.15] font-bold text-primary">
+                    Local Himalayan <br /> Expertise
+                  </h4>
+                </div>
+
+                <p className="text-sm md:text-base text-on-surface-variant font-sans leading-relaxed border-t border-stone-100 pt-6">
+                  Expert guides, carefully crafted itineraries, and unwavering
+                  commitment to safety.
+                </p>
+              </div>
             </div>
           </div>
 
