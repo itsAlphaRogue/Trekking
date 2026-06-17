@@ -276,7 +276,7 @@ export default function AdminSettingsPage() {
                 <img
                   alt="Admin"
                   className="w-full h-full object-cover"
-                  src={profile.avatar_url || "/fallback.png"}
+                  src={profile.avatar_url || "/default.png"}
                 />
               </div>
               <div>

@@ -64,8 +64,7 @@ export default function DashboardStats() {
       badgeText: "Stable",
       badgeClass: "bg-primary-fixed text-on-primary-fixed",
       dark: true,
-      bgImage:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDOT_BvVt_iCQi_NFFKCsMnq_gvVOgFnq40Acf71VbUX3I0Cky_tiEr9jp4s6xWyRIrIgGia-02_4TOLGJm9wUWt7IRNWP8_zZz90COvkaIm9eGK197wc8fFye54ShJA7DUhrjHu73eV0_iJw8JqExAyYAMsJqeU1eO9_IDbJmm53RGO7YTxRSwLjOfnYZv6qAXn-eFB7AQZYo5gneuqBeVUAD3gXJK4iLXxjhZs3HKiaUiHslLXUfImPasXiJ2XKym2mIZBcjdjJvd",
+      bgImage: "/default.png",
     },
   ];
 

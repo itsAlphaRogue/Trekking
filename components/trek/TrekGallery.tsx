@@ -21,7 +21,7 @@ export default function TrekGallery({ images }: { images: GalleryImage[] }) {
             <Image
               alt={img.alt ?? ""}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              src={img.src || "/fallback.png"}
+              src={img.src || "/default.png"}
               fill
               sizes="(max-width: 768px) 50vw, 33vw"
             />

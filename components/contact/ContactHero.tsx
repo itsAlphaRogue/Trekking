@@ -6,7 +6,7 @@ export default function ContactHero({ heroImage }: { heroImage?: string }) {
       <Image
         className="absolute inset-0 w-full h-full object-cover"
         alt="Himalayan peaks in morning mist"
-        src={heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuAt6ebj-D7Z9Uyk4ILclYdSP5YRh6frpPvhQA1mze2LW8ZCTYig7CUDTJabZPFPVDE5WmRjTqfeunGzzNRPdIHE65CCN2zTzAnsN0C3Td3GF7OAEEOAZY4Qfxo7gm5fxGUWrBJzSEmESjKGKWQ1Pa2TEj1sJ0SVgU8JdnYGwWshmvAguOyYTOHNFjM17G3CPwuqMwNLDMeD7c4wuGjkXCtWNVc5i8xM7D1g2HpXehWO9nfPcBiBxvB3kbk9wHUmymWm7rHMBCfQbd8wP"}
+        src={heroImage || "/default.png"}
         fill
         priority
         sizes="100vw"

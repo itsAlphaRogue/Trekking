@@ -26,7 +26,7 @@ export default function HeroSection({ heroImage }: { heroImage?: string }) {
         <Image
           alt="Mount Everest"
           className="w-full h-full object-cover"
-          src={heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuBrgoSqs4cPQK1mamJWCRgY6Gm__s3TK3uTF2gVhwu6Qx6wXw8bzTW3lcHsvFbHGqFgWvoP28sX979m_SC-3eyPhYC93hmVE04hjgKQy-5CFWk-K6mss85ILUTusAB5WyvjqzvuPf31ESLf2Bv-w0QsLNc0rx5PbF4AkdhC00IqHoEJQlhNStnvXmTTTixSlkB-7Esb4tpSL_IRkJnRm-PR2iwId77btUUz7cIKo3AE2nr0rPc8iJSrmSJ-MhLdCKnbtTEsi4xc8vnz"}
+          src={heroImage || "/default.png"}
           fill
           priority
           sizes="100vw"

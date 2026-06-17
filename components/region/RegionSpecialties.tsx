@@ -23,7 +23,7 @@ export default function RegionSpecialties({ region, specialties }: Props) {
               <Image
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 alt={`${region.name} specialty`}
-                src={region.specialty_image || "/fallback.png"}
+                src={region.specialty_image || "/default.png"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />

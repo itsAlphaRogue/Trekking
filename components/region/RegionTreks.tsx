@@ -68,7 +68,7 @@ export default function RegionTreks({ treks }: Props) {
                 <Image
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={trek.title}
-                  src={trek.image || "/fallback.png"}
+                  src={trek.image || "/default.png"}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
@@ -102,7 +102,9 @@ export default function RegionTreks({ treks }: Props) {
                       From
                     </p>
                     <p className="font-serif text-xl font-semibold text-primary">
-                      {trek.price_from ? `$${trek.price_from.toLocaleString()}` : "Inquire"}
+                      {trek.price_from
+                        ? `$${trek.price_from.toLocaleString()}`
+                        : "Inquire"}
                     </p>
                   </div>
                 </div>

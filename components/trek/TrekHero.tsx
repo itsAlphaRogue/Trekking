@@ -8,7 +8,7 @@ export default function TrekHero({ trek }: { trek: TrekDetail }) {
         <Image
           alt={trek.title}
           className="w-full h-full object-cover"
-          src={trek.heroImage || "/fallback.png"}
+          src={trek.heroImage || "/default.png"}
           fill
           priority
           sizes="100vw"

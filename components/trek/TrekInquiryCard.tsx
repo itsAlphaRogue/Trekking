@@ -58,7 +58,7 @@ export default function TrekInquiryCard({
               <Image
                 alt={trek.guideName}
                 className="w-full h-full object-cover"
-                src={trek.guideImage || "/fallback.png"}
+                src={trek.guideImage || "/default.png"}
                 fill
                 sizes="48px"
               />

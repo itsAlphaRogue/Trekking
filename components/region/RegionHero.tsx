@@ -8,7 +8,7 @@ export default function RegionHero({ region }: { region: RegionDetail }) {
         <Image
           className="w-full h-full object-cover"
           alt={region.name}
-          src={region.hero_image || "/fallback.png"}
+          src={region.hero_image || "/default.png"}
           fill
           priority
           sizes="100vw"

@@ -37,7 +37,7 @@ export default function DestinationGrid({ regions }: Props) {
               <Image
                 alt={r0.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r0.heroImage || "/fallback.png"}
+                src={r0.heroImage || "/default.png"}
                 fill
                 sizes="(max-width: 768px) 100vw, 66vw"
               />
@@ -77,7 +77,7 @@ export default function DestinationGrid({ regions }: Props) {
               <Image
                 alt={r1.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r1.heroImage || "/fallback.png"}
+                src={r1.heroImage || "/default.png"}
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
@@ -113,7 +113,7 @@ export default function DestinationGrid({ regions }: Props) {
               <Image
                 alt={r2.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r2.heroImage || "/fallback.png"}
+                src={r2.heroImage || "/default.png"}
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
@@ -150,7 +150,7 @@ export default function DestinationGrid({ regions }: Props) {
                 <Image
                   alt={r3.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  src={r3.heroImage || "/fallback.png"}
+                  src={r3.heroImage || "/default.png"}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
@@ -192,7 +192,7 @@ export default function DestinationGrid({ regions }: Props) {
               <Image
                 alt={r.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                src={r.heroImage || "/fallback.png"}
+                src={r.heroImage || "/default.png"}
                 fill
                 sizes="(max-width: 768px) 100vw, 33vw"
               />

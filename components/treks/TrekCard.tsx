@@ -43,7 +43,7 @@ export default function TrekCard({ trek }: { trek: TrekListing }) {
         <Image
           alt={trek.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          src={trek.image || "/fallback.png"}
+          src={trek.image || "/default.png"}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />

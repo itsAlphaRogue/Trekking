@@ -1,13 +1,17 @@
 import Image from "next/image";
 
-export default function DestinationsHero({ heroImage }: { heroImage?: string }) {
+export default function DestinationsHero({
+  heroImage,
+}: {
+  heroImage?: string;
+}) {
   return (
     <section className="relative h-153.5 flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
           alt="Panoramic Himalayan mountain range"
           className="w-full h-full object-cover"
-          src={heroImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuDuvERccL9a5eiiPrGB0OeoQF8qlC8mrVDKsmUQI9W1Hoihn4B0AoaZyERRYyyd7hEAWd05HqljmwMsvEFQ1wSoMcOW-UGJ53vHkRwdaFTsT_aDJMAQeGbj9Q5Emr4NFBJvL0w5C4IQIFqR6fmy1ZkwX2zYbr-3XPpi6EMFZkVWORLhNLFHNkd2dGBWMAExCc0r8Xjj7hj-dOK3VxPmvyA6yXIJZB5zuNI9XygftxBBwMtRcl3fFSI_M6DR8tUWNngZ2qB9Xha0wpbm"}
+          src={heroImage || "/default.png"}
           fill
           priority
           sizes="100vw"

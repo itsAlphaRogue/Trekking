@@ -132,7 +132,7 @@ export default function AdminSidebar() {
               <Image
                 alt="Admin"
                 className="w-full h-full object-cover"
-                src={profile?.avatar_url || "/fallback.png"}
+                src={profile?.avatar_url || "/default.png"}
                 fill
                 sizes="40px"
               />

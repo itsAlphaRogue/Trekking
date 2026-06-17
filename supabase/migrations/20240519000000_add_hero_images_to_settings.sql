@@ -6,7 +6,7 @@ ALTER TABLE settings ADD COLUMN IF NOT EXISTS destinations_hero_image TEXT;
 -- Update existing settings row if it exists with default images if they are NULL
 UPDATE settings 
 SET 
-  home_hero_image = COALESCE(home_hero_image, 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrgoSqs4cPQK1mamJWCRgY6Gm__s3TK3uTF2gVhwu6Qx6wXw8bzTW3lcHsvFbHGqFgWvoP28sX979m_SC-3eyPhYC93hmVE04hjgKQy-5CFWk-K6mss85ILUTusAB5WyvjqzvuPf31ESLf2Bv-w0QsLNc0rx5PbF4AkdhC00IqHoEJQlhNStnvXmTTTixSlkB-7Esb4tpSL_IRkJnRm-PR2iwId77btUUz7cIKo3AE2nr0rPc8iJSrmSJ-MhLdCKnbtTEsi4xc8vnz'),
-  contact_hero_image = COALESCE(contact_hero_image, 'https://lh3.googleusercontent.com/aida-public/AB6AXuAt6ebj-D7Z9Uyk4ILclYdSP5YRh6frpPvhQA1mze2LW8ZCTYig7CUDTJabZPFPVDE5WmRjTqfeunGzzNRPdIHE65CCN2zTzAnsN0C3Td3GF7OAEEOAZY4Qfxo7gm5fxGUWrBJzSEmESjKGKWQ1Pa2TEj1sJ0SVgU8JdnYGwWshmvAguOyYTOHNFjM17G3CPwuqMwNLDMeD7c4wuGjkXCtWNVc5i8xM7D1g2HpXehWO9nfPcBiBxvB3kbk9wHUmymWm7rHMBCfQbd8wP'),
-  destinations_hero_image = COALESCE(destinations_hero_image, 'https://lh3.googleusercontent.com/aida-public/AB6AXuDuvERccL9a5eiiPrGB0OeoQF8qlC8mrVDKsmUQI9W1Hoihn4B0AoaZyERRYyyd7hEAWd05HqljmwMsvEFQ1wSoMcOW-UGJ53vHkRwdaFTsT_aDJMAQeGbj9Q5Emr4NFBJvL0w5C4IQIFqR6fmy1ZkwX2zYbr-3XPpi6EMFZkVWORLhNLFHNkd2dGBWMAExCc0r8Xjj7hj-dOK3VxPmvyA6yXIJZB5zuNI9XygftxBBwMtRcl3fFSI_M6DR8tUWNngZ2qB9Xha0wpbm')
+  home_hero_image = COALESCE(home_hero_image, '/default.png'),
+  contact_hero_image = COALESCE(contact_hero_image, '/default.png'),
+  destinations_hero_image = COALESCE(destinations_hero_image, '/default.png')
 WHERE id = 1;
