@@ -16,9 +16,9 @@ export default function WhyTrekWithUs({
           {/* Image column */}
           <div className="relative lg:pr-12 group">
             {/* Background Accent Frame - Inspired by Himalayan adventure branding */}
-            <div className="absolute inset-0 border border-secondary/20 rounded-3xl translate-x-6 translate-y-6 z-0 hidden md:block transition-transform duration-500 group-hover:translate-x-4 group-hover:translate-y-4"></div>
+            <div className="absolute inset-0 border border-secondary/20 translate-x-6 translate-y-6 z-0 hidden md:block transition-transform duration-500 group-hover:translate-x-4 group-hover:translate-y-4"></div>
 
-            <div className="aspect-4/5 bg-surface-container-highest overflow-hidden relative rounded-2xl shadow-2xl border-4 border-white z-10">
+            <div className="aspect-4/5 bg-surface-container-highest overflow-hidden relative shadow-2xl border-4 border-white z-10">
               <Image
                 alt="Sherpa Guide Portrait"
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -31,7 +31,7 @@ export default function WhyTrekWithUs({
             </div>
 
             {/* Expertise Card - Premium Glassmorphism design */}
-            <div className="absolute -bottom-10 -right-6 md:-bottom-14 md:-right-10 bg-white/95 backdrop-blur-xl p-8 md:p-10 shadow-2xl rounded-2xl border border-stone-100 max-w-70 md:max-w-sm hidden md:block z-20 transition-all duration-500 hover:-translate-y-2">
+            <div className="absolute -bottom-10 -right-6 md:-bottom-14 md:-right-10 bg-white/95 backdrop-blur-xl p-8 md:p-10 shadow-2xl border border-stone-100 max-w-70 md:max-w-sm hidden md:block z-20 transition-all duration-500 hover:-translate-y-2">
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
