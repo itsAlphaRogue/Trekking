@@ -1405,7 +1405,7 @@ export default function AdminPackagesPage() {
                     </td>
                     {/* Actions */}
                     <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-2 transition-opacity">
                         <button
                           onClick={() => openEdit(trip)}
                           className="p-1.5 rounded border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors"
