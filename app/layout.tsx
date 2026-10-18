@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Noto_Serif, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/supabase/queries/settings";
+import TopLoadingBar from "@/components/TopLoadingBar";
 
 const settings = await getSettings();
 
@@ -38,6 +40,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${noto.variable} ${vietnam.variable} antialiased`}>
+        <Suspense fallback={null}>
+          <TopLoadingBar />
+        </Suspense>
         {children}
       </body>
     </html>
