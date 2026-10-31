@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Noto_Serif, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/supabase/queries/settings";
-import TopLoadingBar from "@/components/TopLoadingBar";
+import NextTopLoader from 'nextjs-toploader';
 
 const settings = await getSettings();
 
@@ -41,7 +41,7 @@ export default function RootLayout({
       </head>
       <body className={`${noto.variable} ${vietnam.variable} antialiased`}>
         <Suspense fallback={null}>
-          <TopLoadingBar />
+          <NextTopLoader color="#002046" shadow={false} showSpinner={false} />
         </Suspense>
         {children}
       </body>
