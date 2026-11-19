@@ -9,12 +9,7 @@ import { createClient as createBrowserClient } from "@supabase/supabase-js";
 // These mirror the DB columns exactly (snake_case) and camelCase aliases
 // from the v_trek_listing and v_trek_detail views.
 
-export type Difficulty =
-  | "Easy"
-  | "Moderate"
-  | "Strenuous"
-  | "Challenging"
-  | "Remote";
+export type Difficulty = "Easy" | "Moderate" | "Challenging";
 
 export interface TrekListing {
   id: string;

@@ -8,7 +8,6 @@ import { RegionListing } from "@/lib/supabase/queries/regions";
 const DIFFICULTIES: Difficulty[] = [
   "Easy",
   "Moderate",
-  "Strenuous",
   "Challenging",
 ];
 

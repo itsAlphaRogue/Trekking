@@ -16,20 +16,10 @@ const difficultyConfig: Record<
     dot: "bg-secondary-fixed",
     label: "Moderate",
   },
-  Strenuous: {
-    bg: "bg-tertiary-container text-on-tertiary-container",
-    dot: "bg-tertiary-fixed-dim",
-    label: "Strenuous",
-  },
   Challenging: {
     bg: "bg-primary text-on-primary",
     dot: "bg-primary-fixed-dim",
     label: "Challenging",
-  },
-  Remote: {
-    bg: "bg-tertiary-fixed text-on-tertiary-fixed-variant",
-    dot: "bg-tertiary-fixed-dim",
-    label: "Remote",
   },
 };
 

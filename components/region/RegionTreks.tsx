@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-type Difficulty = "Easy" | "Moderate" | "Strenuous" | "Challenging" | "Remote";
+type Difficulty = "Easy" | "Moderate" | "Challenging";
 
 interface Trek {
   id: string;
@@ -21,9 +21,7 @@ interface Props {
 const difficultyColors: Record<Difficulty, string> = {
   Easy: "bg-secondary-container text-on-secondary-fixed-variant",
   Moderate: "bg-primary-fixed text-on-primary-fixed-variant",
-  Strenuous: "bg-primary text-on-primary",
   Challenging: "bg-tertiary-container text-on-tertiary-container",
-  Remote: "bg-tertiary-fixed text-on-tertiary-fixed-variant",
 };
 
 function getDifficultyColor(difficulty: string): string {
